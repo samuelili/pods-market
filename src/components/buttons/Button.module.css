@@ -1,0 +1,21 @@
+.Button {
+    display: inline-flex;
+    gap: 0.25rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.375rem;
+
+    background: rgba(79, 83, 86, 0.2);
+
+    transition: background-color 160ms, box-shadow 160ms;
+    cursor: pointer;
+
+    &:hover:not([data-selected=true]) {
+        background: rgba(87, 89, 100, 0.1);
+        box-shadow: 0 0 0.75rem -0.25rem rgba(200, 200, 200, 0.4);
+    }
+
+    &[data-selected=true] {
+        background: rgba(41, 42, 45, 0.2);
+        box-shadow: 0 0 0.75rem -0.25rem rgba(200, 200, 200, 0.2);
+    }
+}

@@ -1,0 +1,16 @@
+.Image {
+    margin-top: 0.5rem;
+
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    background-color: rgba(0, 0, 0, 0.4);
+    border-radius: 0.375rem;
+}
+
+.Name {
+    font-size: 1.5rem;
+}
+
+.Price {
+    font-size: 1.5rem;
+}
