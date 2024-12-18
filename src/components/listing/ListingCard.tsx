@@ -22,9 +22,12 @@ const ListingCard = ({
   ...props
 }: ListingCardProps) => {
   return (
-    <Link search={{
-      postId: "asdf"
-    }}>
+    <Link
+      to={'.'}
+      search={{
+        postId: 'asdf',
+      }}
+    >
       <Card className={styles.ListingCard} hover={true} {...props}>
         <div className={styles.ImageContainer}>
           {imageSrc && <img src={imageSrc} alt={name} />}

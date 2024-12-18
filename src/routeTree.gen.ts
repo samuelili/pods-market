@@ -18,12 +18,18 @@ import { Route as PodsPodIdImport } from './routes/pods/$podId'
 
 // Create Virtual Routes
 
+const CreateLazyImport = createFileRoute('/create')()
 const IndexLazyImport = createFileRoute('/')()
 const SettingsIndexLazyImport = createFileRoute('/settings/')()
-const CreateIndexLazyImport = createFileRoute('/create/')()
 const CreateListingLazyImport = createFileRoute('/create/listing')()
 
 // Create/Update Routes
+
+const CreateLazyRoute = CreateLazyImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/create.lazy').then((d) => d.Route))
 
 const IndexLazyRoute = IndexLazyImport.update({
   id: '/',
@@ -39,16 +45,10 @@ const SettingsIndexLazyRoute = SettingsIndexLazyImport.update({
   import('./routes/settings/index.lazy').then((d) => d.Route),
 )
 
-const CreateIndexLazyRoute = CreateIndexLazyImport.update({
-  id: '/create/',
-  path: '/create/',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/create/index.lazy').then((d) => d.Route))
-
 const CreateListingLazyRoute = CreateListingLazyImport.update({
-  id: '/create/listing',
-  path: '/create/listing',
-  getParentRoute: () => rootRoute,
+  id: '/listing',
+  path: '/listing',
+  getParentRoute: () => CreateLazyRoute,
 } as any).lazy(() =>
   import('./routes/create/listing.lazy').then((d) => d.Route),
 )
@@ -76,6 +76,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyImport
       parentRoute: typeof rootRoute
     }
+    '/create': {
+      id: '/create'
+      path: '/create'
+      fullPath: '/create'
+      preLoaderRoute: typeof CreateLazyImport
+      parentRoute: typeof rootRoute
+    }
     '/pods/$podId': {
       id: '/pods/$podId'
       path: '/pods/$podId'
@@ -92,17 +99,10 @@ declare module '@tanstack/react-router' {
     }
     '/create/listing': {
       id: '/create/listing'
-      path: '/create/listing'
+      path: '/listing'
       fullPath: '/create/listing'
       preLoaderRoute: typeof CreateListingLazyImport
-      parentRoute: typeof rootRoute
-    }
-    '/create/': {
-      id: '/create/'
-      path: '/create'
-      fullPath: '/create'
-      preLoaderRoute: typeof CreateIndexLazyImport
-      parentRoute: typeof rootRoute
+      parentRoute: typeof CreateLazyImport
     }
     '/settings/': {
       id: '/settings/'
@@ -116,31 +116,43 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
+interface CreateLazyRouteChildren {
+  CreateListingLazyRoute: typeof CreateListingLazyRoute
+}
+
+const CreateLazyRouteChildren: CreateLazyRouteChildren = {
+  CreateListingLazyRoute: CreateListingLazyRoute,
+}
+
+const CreateLazyRouteWithChildren = CreateLazyRoute._addFileChildren(
+  CreateLazyRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
+  '/create': typeof CreateLazyRouteWithChildren
   '/pods/$podId': typeof PodsPodIdRoute
   '/pods/all': typeof PodsAllRoute
   '/create/listing': typeof CreateListingLazyRoute
-  '/create': typeof CreateIndexLazyRoute
   '/settings': typeof SettingsIndexLazyRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
+  '/create': typeof CreateLazyRouteWithChildren
   '/pods/$podId': typeof PodsPodIdRoute
   '/pods/all': typeof PodsAllRoute
   '/create/listing': typeof CreateListingLazyRoute
-  '/create': typeof CreateIndexLazyRoute
   '/settings': typeof SettingsIndexLazyRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexLazyRoute
+  '/create': typeof CreateLazyRouteWithChildren
   '/pods/$podId': typeof PodsPodIdRoute
   '/pods/all': typeof PodsAllRoute
   '/create/listing': typeof CreateListingLazyRoute
-  '/create/': typeof CreateIndexLazyRoute
   '/settings/': typeof SettingsIndexLazyRoute
 }
 
@@ -148,45 +160,43 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/create'
     | '/pods/$podId'
     | '/pods/all'
     | '/create/listing'
-    | '/create'
     | '/settings'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/create'
     | '/pods/$podId'
     | '/pods/all'
     | '/create/listing'
-    | '/create'
     | '/settings'
   id:
     | '__root__'
     | '/'
+    | '/create'
     | '/pods/$podId'
     | '/pods/all'
     | '/create/listing'
-    | '/create/'
     | '/settings/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
+  CreateLazyRoute: typeof CreateLazyRouteWithChildren
   PodsPodIdRoute: typeof PodsPodIdRoute
   PodsAllRoute: typeof PodsAllRoute
-  CreateListingLazyRoute: typeof CreateListingLazyRoute
-  CreateIndexLazyRoute: typeof CreateIndexLazyRoute
   SettingsIndexLazyRoute: typeof SettingsIndexLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
+  CreateLazyRoute: CreateLazyRouteWithChildren,
   PodsPodIdRoute: PodsPodIdRoute,
   PodsAllRoute: PodsAllRoute,
-  CreateListingLazyRoute: CreateListingLazyRoute,
-  CreateIndexLazyRoute: CreateIndexLazyRoute,
   SettingsIndexLazyRoute: SettingsIndexLazyRoute,
 }
 
@@ -201,15 +211,20 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/create",
         "/pods/$podId",
         "/pods/all",
-        "/create/listing",
-        "/create/",
         "/settings/"
       ]
     },
     "/": {
       "filePath": "index.lazy.tsx"
+    },
+    "/create": {
+      "filePath": "create.lazy.tsx",
+      "children": [
+        "/create/listing"
+      ]
     },
     "/pods/$podId": {
       "filePath": "pods/$podId.tsx"
@@ -218,10 +233,8 @@ export const routeTree = rootRoute
       "filePath": "pods/all.tsx"
     },
     "/create/listing": {
-      "filePath": "create/listing.lazy.tsx"
-    },
-    "/create/": {
-      "filePath": "create/index.lazy.tsx"
+      "filePath": "create/listing.lazy.tsx",
+      "parent": "/create"
     },
     "/settings/": {
       "filePath": "settings/index.lazy.tsx"

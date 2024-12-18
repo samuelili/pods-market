@@ -11,7 +11,8 @@ import {
 import Button from '@/components/buttons/Button.tsx';
 
 import styles from './ListingDetailContent.module.css';
-import { Link } from 'react-router';
+import LinkButton from '@/components/buttons/LinkButton.tsx';
+import {useMatches} from "@tanstack/react-router";
 
 export type ListingDetailContentProps = {
   imageSrc?: string;
@@ -30,18 +31,21 @@ const ListingDetailContent = ({
   sellerName,
   podName,
 }: ListingDetailContentProps) => {
+  const matches = useMatches()
+
   return (
     <>
-      <Link
-        search={{
+      <LinkButton
+        to={matches[matches.length - 1].fullPath}
+        data-selected={false}
+        search={(prev) => ({
+          ...prev,
           postId: '',
-        }}
+        })}
       >
-        <Button>
-          <IconArrowLeft />
-          Back
-        </Button>
-      </Link>
+        <IconArrowLeft />
+        Back
+      </LinkButton>
       <div className={'relative mt-4 ' + styles.Image}>
         <Button
           className={
