@@ -8,14 +8,14 @@ const Root = () => {
   const search = useSearch({
     strict: false,
   });
-  const showPost = search.postId?.length ?? 0 > 0;
-  const showUser = search.userId?.length ?? 0 > 0;
+  const showPost = (search.postId?.length ?? 0) > 0;
+  const showUser = (search.userId?.length ?? 0) > 0;
   const showAdditionalContent = showPost || showUser;
 
   return (
     <>
       <div className={styles.Background} />
-      <div className={styles.Root}>
+      <div className={styles.Root} data-additional={showAdditionalContent}>
         <Navbar className={styles.Navbar} />
         <div className={styles.Content}>
           <Outlet />

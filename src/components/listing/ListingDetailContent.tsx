@@ -46,7 +46,7 @@ const ListingDetailContent = ({
         <IconArrowLeft />
         Back
       </LinkButton>
-      <div className={'relative mt-4 ' + styles.Image}>
+      <div className={'relative mt-2 md:mt-3 lg:mt-4 ' + styles.Image}>
         <Button
           className={
             'absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-transparent p-1'
@@ -85,7 +85,7 @@ const ListingDetailContent = ({
 
           <div className={'mt-2 flex items-center gap-2'}>
             <IconMapPin />
-            <p className={'flex-1 leading-tight'}>Davis</p>
+            <p className={'flex-1 leading-tight'}>Davis, CA</p>
           </div>
 
           <div className={'mt-2 flex items-center gap-2'}>
