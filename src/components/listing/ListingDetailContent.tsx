@@ -46,7 +46,7 @@ const ListingDetailContent = ({
         <IconArrowLeft />
         Back
       </LinkButton>
-      <div className={'relative mt-2 md:mt-3 lg:mt-4 ' + styles.Image}>
+      <div className={'relative mt-layout ' + styles.Image}>
         <Button
           className={
             'absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-transparent p-1'

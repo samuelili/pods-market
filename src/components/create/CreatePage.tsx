@@ -12,7 +12,7 @@ const CreatePage = () => {
       <div className={'mx-auto max-w-xl'}>
         <Card className={'mx-auto p-4'}>
           <h1 className={'text-2xl'}>What Would You Like To Create?</h1>
-          <div className={'mt-4 flex h-[4rem] gap-2'}>
+          <div className={'mt-layout flex h-[4rem] gap-2'}>
             <LinkButton
               to={'/create/listing'}
               className={'flex-1 items-center justify-center'}
