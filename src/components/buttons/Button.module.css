@@ -1,13 +1,22 @@
-.Button {
+.Button, .Button[type='button'], .Button[type='reset'], .Button[type='submit'] {
     display: inline-flex;
     gap: 0.25rem;
     padding: 0.375rem 0.75rem;
     border-radius: 0.375rem;
 
-    background:rgba(0, 0, 0, 0.3);
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.3);
 
     transition: background-color 160ms, box-shadow 160ms;
     cursor: pointer;
+
+    &[data-large=true] {
+        /*heading h-[4rem] w-full items-center justify-center text-2xl*/
+        min-height: 4rem;
+        font-size: 1.25rem;
+    }
 
     &:hover:not([data-selected=true]) {
         background: rgba(0, 0, 0, 0.2);

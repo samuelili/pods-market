@@ -4,11 +4,16 @@ import ReactDOM from 'react-dom/client';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { routeTree } from '@/routeTree.gen.ts';
 
+import { initializeApp } from 'firebase/app';
+
 import '@fontsource/dm-serif-text/index.css';
 import '@fontsource/lexend/index.css';
 import './index.css';
+import {ensureAppInitialized} from "@/logic/firebaseApp.ts";
 
 const router = createRouter({ routeTree });
+
+ensureAppInitialized();
 
 // Register the router instance for type safety
 declare module '@tanstack/react-router' {

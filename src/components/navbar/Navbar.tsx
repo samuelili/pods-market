@@ -43,7 +43,7 @@ const Navbar = ({
             <IconPlus />
           </LinkButton>
         </TooltipTrigger>
-        <TooltipContent>Create Listing</TooltipContent>
+        <TooltipContent>Create</TooltipContent>
       </Tooltip>
 
       <Tooltip placement={'right'} offset={16}>

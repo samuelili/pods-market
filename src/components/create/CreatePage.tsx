@@ -1,5 +1,4 @@
 import Card from '@/components/card/Card.tsx';
-import Button from '@/components/buttons/Button.tsx';
 import { IconBlob, IconFileInvoice } from '@tabler/icons-react';
 import LinkButton from '@/components/buttons/LinkButton.tsx';
 import { Outlet, useMatchRoute } from '@tanstack/react-router';
@@ -21,13 +20,13 @@ const CreatePage = () => {
               <IconFileInvoice />
               Listing
             </LinkButton>
-            <Button
-              // to={'/create/pod'}
+            <LinkButton
+              to={'/create/pod'}
               className={'flex-1 items-center justify-center'}
-              // selected={matchRoute('/create/pod') !== false}
+              selected={matchRoute({ to: '/create/pod' }) !== false}
             >
               <IconBlob /> Pod
-            </Button>
+            </LinkButton>
           </div>
         </Card>
 

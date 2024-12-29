@@ -12,7 +12,7 @@ import Button from '@/components/buttons/Button.tsx';
 
 import styles from './ListingDetailContent.module.css';
 import LinkButton from '@/components/buttons/LinkButton.tsx';
-import {useMatches} from "@tanstack/react-router";
+import { useMatches } from '@tanstack/react-router';
 
 export type ListingDetailContentProps = {
   imageSrc?: string;
@@ -31,12 +31,13 @@ const ListingDetailContent = ({
   sellerName,
   podName,
 }: ListingDetailContentProps) => {
-  const matches = useMatches()
+  const matches = useMatches();
+  const backPath = matches[matches.length - 1].fullPath;
 
   return (
     <>
       <LinkButton
-        to={matches[matches.length - 1].fullPath}
+        to={backPath === '' ? '/' : backPath}
         data-selected={false}
         search={(prev) => ({
           ...prev,

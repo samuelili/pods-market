@@ -31,7 +31,7 @@
     display: contents;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6, .heading {
     font-family: "DM Serif Text", "Times New Roman", serif;
     margin: 0;
 }
@@ -90,11 +90,11 @@ input[type="checkbox"] {
         box-shadow: 0 0 0.75rem -0.25rem rgba(200, 200, 200, 0.9);
 
         &::before {
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.7);
         }
 
         &:hover::before {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.5);
         }
     }
 }

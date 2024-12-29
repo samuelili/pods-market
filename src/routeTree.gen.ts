@@ -13,191 +13,310 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as PodsAllImport } from './routes/pods/all'
-import { Route as PodsPodIdImport } from './routes/pods/$podId'
+import { Route as TestImport } from './routes/test'
+import { Route as LoginImport } from './routes/login'
+import { Route as AuthenticatedImport } from './routes/_authenticated'
+import { Route as AuthenticatedPodsAllImport } from './routes/_authenticated/pods/all'
+import { Route as AuthenticatedPodsPodIdImport } from './routes/_authenticated/pods/$podId'
 
 // Create Virtual Routes
 
-const CreateLazyImport = createFileRoute('/create')()
-const IndexLazyImport = createFileRoute('/')()
-const SettingsIndexLazyImport = createFileRoute('/settings/')()
-const CreateListingLazyImport = createFileRoute('/create/listing')()
+const AuthenticatedIndexLazyImport = createFileRoute('/_authenticated/')()
+const AuthenticatedCreateLazyImport = createFileRoute(
+  '/_authenticated/create',
+)()
+const AuthenticatedSettingsIndexLazyImport = createFileRoute(
+  '/_authenticated/settings/',
+)()
+const AuthenticatedCreatePodLazyImport = createFileRoute(
+  '/_authenticated/create/pod',
+)()
+const AuthenticatedCreateListingLazyImport = createFileRoute(
+  '/_authenticated/create/listing',
+)()
 
 // Create/Update Routes
 
-const CreateLazyRoute = CreateLazyImport.update({
-  id: '/create',
-  path: '/create',
+const TestRoute = TestImport.update({
+  id: '/test',
+  path: '/test',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/create.lazy').then((d) => d.Route))
+} as any)
 
-const IndexLazyRoute = IndexLazyImport.update({
+const LoginRoute = LoginImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/login.lazy').then((d) => d.Route))
+
+const AuthenticatedRoute = AuthenticatedImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthenticatedIndexLazyRoute = AuthenticatedIndexLazyImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
-
-const SettingsIndexLazyRoute = SettingsIndexLazyImport.update({
-  id: '/settings/',
-  path: '/settings/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => AuthenticatedRoute,
 } as any).lazy(() =>
-  import('./routes/settings/index.lazy').then((d) => d.Route),
+  import('./routes/_authenticated/index.lazy').then((d) => d.Route),
 )
 
-const CreateListingLazyRoute = CreateListingLazyImport.update({
-  id: '/listing',
-  path: '/listing',
-  getParentRoute: () => CreateLazyRoute,
+const AuthenticatedCreateLazyRoute = AuthenticatedCreateLazyImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => AuthenticatedRoute,
 } as any).lazy(() =>
-  import('./routes/create/listing.lazy').then((d) => d.Route),
+  import('./routes/_authenticated/create.lazy').then((d) => d.Route),
 )
 
-const PodsAllRoute = PodsAllImport.update({
+const AuthenticatedSettingsIndexLazyRoute =
+  AuthenticatedSettingsIndexLazyImport.update({
+    id: '/settings/',
+    path: '/settings/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/settings/index.lazy').then((d) => d.Route),
+  )
+
+const AuthenticatedCreatePodLazyRoute = AuthenticatedCreatePodLazyImport.update(
+  {
+    id: '/pod',
+    path: '/pod',
+    getParentRoute: () => AuthenticatedCreateLazyRoute,
+  } as any,
+).lazy(() =>
+  import('./routes/_authenticated/create/pod.lazy').then((d) => d.Route),
+)
+
+const AuthenticatedCreateListingLazyRoute =
+  AuthenticatedCreateListingLazyImport.update({
+    id: '/listing',
+    path: '/listing',
+    getParentRoute: () => AuthenticatedCreateLazyRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/create/listing.lazy').then((d) => d.Route),
+  )
+
+const AuthenticatedPodsAllRoute = AuthenticatedPodsAllImport.update({
   id: '/pods/all',
   path: '/pods/all',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/pods/all.lazy').then((d) => d.Route))
+  getParentRoute: () => AuthenticatedRoute,
+} as any).lazy(() =>
+  import('./routes/_authenticated/pods/all.lazy').then((d) => d.Route),
+)
 
-const PodsPodIdRoute = PodsPodIdImport.update({
+const AuthenticatedPodsPodIdRoute = AuthenticatedPodsPodIdImport.update({
   id: '/pods/$podId',
   path: '/pods/$podId',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/pods/$podId.lazy').then((d) => d.Route))
+  getParentRoute: () => AuthenticatedRoute,
+} as any).lazy(() =>
+  import('./routes/_authenticated/pods/$podId.lazy').then((d) => d.Route),
+)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexLazyImport
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthenticatedImport
       parentRoute: typeof rootRoute
     }
-    '/create': {
-      id: '/create'
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginImport
+      parentRoute: typeof rootRoute
+    }
+    '/test': {
+      id: '/test'
+      path: '/test'
+      fullPath: '/test'
+      preLoaderRoute: typeof TestImport
+      parentRoute: typeof rootRoute
+    }
+    '/_authenticated/create': {
+      id: '/_authenticated/create'
       path: '/create'
       fullPath: '/create'
-      preLoaderRoute: typeof CreateLazyImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof AuthenticatedCreateLazyImport
+      parentRoute: typeof AuthenticatedImport
     }
-    '/pods/$podId': {
-      id: '/pods/$podId'
+    '/_authenticated/': {
+      id: '/_authenticated/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedIndexLazyImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/pods/$podId': {
+      id: '/_authenticated/pods/$podId'
       path: '/pods/$podId'
       fullPath: '/pods/$podId'
-      preLoaderRoute: typeof PodsPodIdImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof AuthenticatedPodsPodIdImport
+      parentRoute: typeof AuthenticatedImport
     }
-    '/pods/all': {
-      id: '/pods/all'
+    '/_authenticated/pods/all': {
+      id: '/_authenticated/pods/all'
       path: '/pods/all'
       fullPath: '/pods/all'
-      preLoaderRoute: typeof PodsAllImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof AuthenticatedPodsAllImport
+      parentRoute: typeof AuthenticatedImport
     }
-    '/create/listing': {
-      id: '/create/listing'
+    '/_authenticated/create/listing': {
+      id: '/_authenticated/create/listing'
       path: '/listing'
       fullPath: '/create/listing'
-      preLoaderRoute: typeof CreateListingLazyImport
-      parentRoute: typeof CreateLazyImport
+      preLoaderRoute: typeof AuthenticatedCreateListingLazyImport
+      parentRoute: typeof AuthenticatedCreateLazyImport
     }
-    '/settings/': {
-      id: '/settings/'
+    '/_authenticated/create/pod': {
+      id: '/_authenticated/create/pod'
+      path: '/pod'
+      fullPath: '/create/pod'
+      preLoaderRoute: typeof AuthenticatedCreatePodLazyImport
+      parentRoute: typeof AuthenticatedCreateLazyImport
+    }
+    '/_authenticated/settings/': {
+      id: '/_authenticated/settings/'
       path: '/settings'
       fullPath: '/settings'
-      preLoaderRoute: typeof SettingsIndexLazyImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof AuthenticatedSettingsIndexLazyImport
+      parentRoute: typeof AuthenticatedImport
     }
   }
 }
 
 // Create and export the route tree
 
-interface CreateLazyRouteChildren {
-  CreateListingLazyRoute: typeof CreateListingLazyRoute
+interface AuthenticatedCreateLazyRouteChildren {
+  AuthenticatedCreateListingLazyRoute: typeof AuthenticatedCreateListingLazyRoute
+  AuthenticatedCreatePodLazyRoute: typeof AuthenticatedCreatePodLazyRoute
 }
 
-const CreateLazyRouteChildren: CreateLazyRouteChildren = {
-  CreateListingLazyRoute: CreateListingLazyRoute,
+const AuthenticatedCreateLazyRouteChildren: AuthenticatedCreateLazyRouteChildren =
+  {
+    AuthenticatedCreateListingLazyRoute: AuthenticatedCreateListingLazyRoute,
+    AuthenticatedCreatePodLazyRoute: AuthenticatedCreatePodLazyRoute,
+  }
+
+const AuthenticatedCreateLazyRouteWithChildren =
+  AuthenticatedCreateLazyRoute._addFileChildren(
+    AuthenticatedCreateLazyRouteChildren,
+  )
+
+interface AuthenticatedRouteChildren {
+  AuthenticatedCreateLazyRoute: typeof AuthenticatedCreateLazyRouteWithChildren
+  AuthenticatedIndexLazyRoute: typeof AuthenticatedIndexLazyRoute
+  AuthenticatedPodsPodIdRoute: typeof AuthenticatedPodsPodIdRoute
+  AuthenticatedPodsAllRoute: typeof AuthenticatedPodsAllRoute
+  AuthenticatedSettingsIndexLazyRoute: typeof AuthenticatedSettingsIndexLazyRoute
 }
 
-const CreateLazyRouteWithChildren = CreateLazyRoute._addFileChildren(
-  CreateLazyRouteChildren,
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedCreateLazyRoute: AuthenticatedCreateLazyRouteWithChildren,
+  AuthenticatedIndexLazyRoute: AuthenticatedIndexLazyRoute,
+  AuthenticatedPodsPodIdRoute: AuthenticatedPodsPodIdRoute,
+  AuthenticatedPodsAllRoute: AuthenticatedPodsAllRoute,
+  AuthenticatedSettingsIndexLazyRoute: AuthenticatedSettingsIndexLazyRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
 )
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexLazyRoute
-  '/create': typeof CreateLazyRouteWithChildren
-  '/pods/$podId': typeof PodsPodIdRoute
-  '/pods/all': typeof PodsAllRoute
-  '/create/listing': typeof CreateListingLazyRoute
-  '/settings': typeof SettingsIndexLazyRoute
+  '': typeof AuthenticatedRouteWithChildren
+  '/login': typeof LoginRoute
+  '/test': typeof TestRoute
+  '/create': typeof AuthenticatedCreateLazyRouteWithChildren
+  '/': typeof AuthenticatedIndexLazyRoute
+  '/pods/$podId': typeof AuthenticatedPodsPodIdRoute
+  '/pods/all': typeof AuthenticatedPodsAllRoute
+  '/create/listing': typeof AuthenticatedCreateListingLazyRoute
+  '/create/pod': typeof AuthenticatedCreatePodLazyRoute
+  '/settings': typeof AuthenticatedSettingsIndexLazyRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexLazyRoute
-  '/create': typeof CreateLazyRouteWithChildren
-  '/pods/$podId': typeof PodsPodIdRoute
-  '/pods/all': typeof PodsAllRoute
-  '/create/listing': typeof CreateListingLazyRoute
-  '/settings': typeof SettingsIndexLazyRoute
+  '/login': typeof LoginRoute
+  '/test': typeof TestRoute
+  '/create': typeof AuthenticatedCreateLazyRouteWithChildren
+  '/': typeof AuthenticatedIndexLazyRoute
+  '/pods/$podId': typeof AuthenticatedPodsPodIdRoute
+  '/pods/all': typeof AuthenticatedPodsAllRoute
+  '/create/listing': typeof AuthenticatedCreateListingLazyRoute
+  '/create/pod': typeof AuthenticatedCreatePodLazyRoute
+  '/settings': typeof AuthenticatedSettingsIndexLazyRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof IndexLazyRoute
-  '/create': typeof CreateLazyRouteWithChildren
-  '/pods/$podId': typeof PodsPodIdRoute
-  '/pods/all': typeof PodsAllRoute
-  '/create/listing': typeof CreateListingLazyRoute
-  '/settings/': typeof SettingsIndexLazyRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/login': typeof LoginRoute
+  '/test': typeof TestRoute
+  '/_authenticated/create': typeof AuthenticatedCreateLazyRouteWithChildren
+  '/_authenticated/': typeof AuthenticatedIndexLazyRoute
+  '/_authenticated/pods/$podId': typeof AuthenticatedPodsPodIdRoute
+  '/_authenticated/pods/all': typeof AuthenticatedPodsAllRoute
+  '/_authenticated/create/listing': typeof AuthenticatedCreateListingLazyRoute
+  '/_authenticated/create/pod': typeof AuthenticatedCreatePodLazyRoute
+  '/_authenticated/settings/': typeof AuthenticatedSettingsIndexLazyRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
+    | ''
+    | '/login'
+    | '/test'
     | '/create'
+    | '/'
     | '/pods/$podId'
     | '/pods/all'
     | '/create/listing'
+    | '/create/pod'
     | '/settings'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
+    | '/login'
+    | '/test'
     | '/create'
+    | '/'
     | '/pods/$podId'
     | '/pods/all'
     | '/create/listing'
+    | '/create/pod'
     | '/settings'
   id:
     | '__root__'
-    | '/'
-    | '/create'
-    | '/pods/$podId'
-    | '/pods/all'
-    | '/create/listing'
-    | '/settings/'
+    | '/_authenticated'
+    | '/login'
+    | '/test'
+    | '/_authenticated/create'
+    | '/_authenticated/'
+    | '/_authenticated/pods/$podId'
+    | '/_authenticated/pods/all'
+    | '/_authenticated/create/listing'
+    | '/_authenticated/create/pod'
+    | '/_authenticated/settings/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexLazyRoute: typeof IndexLazyRoute
-  CreateLazyRoute: typeof CreateLazyRouteWithChildren
-  PodsPodIdRoute: typeof PodsPodIdRoute
-  PodsAllRoute: typeof PodsAllRoute
-  SettingsIndexLazyRoute: typeof SettingsIndexLazyRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  LoginRoute: typeof LoginRoute
+  TestRoute: typeof TestRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexLazyRoute: IndexLazyRoute,
-  CreateLazyRoute: CreateLazyRouteWithChildren,
-  PodsPodIdRoute: PodsPodIdRoute,
-  PodsAllRoute: PodsAllRoute,
-  SettingsIndexLazyRoute: SettingsIndexLazyRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  LoginRoute: LoginRoute,
+  TestRoute: TestRoute,
 }
 
 export const routeTree = rootRoute
@@ -210,34 +329,58 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/",
-        "/create",
-        "/pods/$podId",
-        "/pods/all",
-        "/settings/"
+        "/_authenticated",
+        "/login",
+        "/test"
       ]
     },
-    "/": {
-      "filePath": "index.lazy.tsx"
-    },
-    "/create": {
-      "filePath": "create.lazy.tsx",
+    "/_authenticated": {
+      "filePath": "_authenticated.tsx",
       "children": [
-        "/create/listing"
+        "/_authenticated/create",
+        "/_authenticated/",
+        "/_authenticated/pods/$podId",
+        "/_authenticated/pods/all",
+        "/_authenticated/settings/"
       ]
     },
-    "/pods/$podId": {
-      "filePath": "pods/$podId.tsx"
+    "/login": {
+      "filePath": "login.ts"
     },
-    "/pods/all": {
-      "filePath": "pods/all.tsx"
+    "/test": {
+      "filePath": "test.tsx"
     },
-    "/create/listing": {
-      "filePath": "create/listing.lazy.tsx",
-      "parent": "/create"
+    "/_authenticated/create": {
+      "filePath": "_authenticated/create.lazy.tsx",
+      "parent": "/_authenticated",
+      "children": [
+        "/_authenticated/create/listing",
+        "/_authenticated/create/pod"
+      ]
     },
-    "/settings/": {
-      "filePath": "settings/index.lazy.tsx"
+    "/_authenticated/": {
+      "filePath": "_authenticated/index.lazy.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/pods/$podId": {
+      "filePath": "_authenticated/pods/$podId.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/pods/all": {
+      "filePath": "_authenticated/pods/all.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/create/listing": {
+      "filePath": "_authenticated/create/listing.lazy.tsx",
+      "parent": "/_authenticated/create"
+    },
+    "/_authenticated/create/pod": {
+      "filePath": "_authenticated/create/pod.lazy.tsx",
+      "parent": "/_authenticated/create"
+    },
+    "/_authenticated/settings/": {
+      "filePath": "_authenticated/settings/index.lazy.tsx",
+      "parent": "/_authenticated"
     }
   }
 }
