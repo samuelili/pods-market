@@ -1,9 +1,9 @@
 import Card from '../card/Card';
-import {logout, user} from '@/logic/auth.ts';
+import { logout, user } from '@/logic/auth.ts';
 import Button from '@/components/buttons/Button.tsx';
 import { useCallback, useState } from 'react';
 import Loading from '@/components/general/Loading.tsx';
-import {useNavigate} from "@tanstack/react-router";
+import { useNavigate } from '@tanstack/react-router';
 
 const SettingsPage = () => {
   const navigate = useNavigate();
@@ -18,7 +18,12 @@ const SettingsPage = () => {
 
       await logout();
 
-      await navigate({to: "/login"})
+      await navigate({
+        to: '/login',
+        search: {
+          redirect: null,
+        },
+      });
 
       setLoggingOut(false);
     } catch (e) {

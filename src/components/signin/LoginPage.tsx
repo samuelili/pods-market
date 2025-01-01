@@ -52,9 +52,9 @@ const LoginPage = () => {
   );
 
   return (
-    <div className={'mx-auto mt-16 max-w-lg'}>
+    <div className={'mx-auto mt-16 max-w-lg p-layout'}>
       <Card className={'p-layout'}>
-        <h1 className={'text-center text-4xl'}>Pods Market</h1>
+        <h1 className={'text-center text-4xl'}>BuyDeez</h1>
       </Card>
       <form className={'contents'} onSubmit={handleSubmit(onSubmit)}>
         <Card className={'mt-layout p-layout'}>

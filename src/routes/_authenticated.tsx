@@ -1,9 +1,10 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
-import { checkUserPromise, user } from '@/logic/auth.ts';
+import { getQueryClient } from '@/logic/queryClient.ts';
+import queries from '@/logic/queries.ts';
 
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: async ({ location }) => {
-    await checkUserPromise;
+    const user = await getQueryClient().ensureQueryData(queries.users.current);
 
     if (user === null) {
       throw redirect({

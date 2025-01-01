@@ -11,11 +11,16 @@ import {
   TooltipTrigger,
 } from '@/components/tooltip/Tooltip.tsx';
 import LinkButton from '@/components/buttons/LinkButton.tsx';
+import { useQuery } from '@tanstack/react-query';
+import queries from '@/logic/queries.ts';
+import {getInitials} from "@/logic/misc.ts";
 
 const Navbar = ({
   className,
   ...props
 }: BaseHTMLAttributes<HTMLDivElement>) => {
+  const { data: pods } = useQuery(queries.pods.all);
+
   return (
     <div className={' ' + className} {...props}>
       <Tooltip placement={'right'} offset={16}>
@@ -75,22 +80,23 @@ const Navbar = ({
         <TooltipContent>All Pods</TooltipContent>
       </Tooltip>
 
-      {[0, 1, 2, 3, 4, 5].map((i) => (
-        <Tooltip placement={'right'} offset={16}>
-          <TooltipTrigger asChild={true}>
-            <LinkButton
-              to={'/pods/$podId'}
-              params={{
-                podId: 'asdf',
-              }}
-              className={
-                'flex h-[3rem] w-[3rem] items-center justify-center rounded-full bg-img'
-              }
-            ></LinkButton>
-          </TooltipTrigger>
-          <TooltipContent>{i}th Pod</TooltipContent>
-        </Tooltip>
-      ))}
+      {pods &&
+        pods.map((pod) => (
+          <Tooltip placement={'right'} offset={16}>
+            <TooltipTrigger asChild={true}>
+              <LinkButton
+                to={'/pods/$podId'}
+                params={{
+                  podId: pod.uid,
+                }}
+                className={
+                  'flex h-[3rem] w-[3rem] items-center justify-center rounded-full bg-img'
+                }
+              >{getInitials(pod.name)}</LinkButton>
+            </TooltipTrigger>
+            <TooltipContent>{pod.name}</TooltipContent>
+          </Tooltip>
+        ))}
     </div>
   );
 };
