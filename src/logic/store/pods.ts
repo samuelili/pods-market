@@ -7,6 +7,7 @@ import {
   getDocs,
   getFirestore,
   query,
+  setDoc,
   where,
 } from 'firebase/firestore';
 import { ensureAppInitialized } from '@/logic/firebaseApp.ts';
@@ -61,4 +62,27 @@ export async function getPods(): Promise<Pod[]> {
   const snap = await getDocs(q);
 
   return snap.docs.filter((doc) => doc.exists()).map((doc) => podFromSnap(doc));
+}
+
+export async function updatePod(
+  podId: string,
+  update: Partial<Pod>,
+): Promise<Pod> {
+  await setDoc(doc(podsRef, podId), update, { merge: true });
+  const docSnap = await getDoc(doc(podsRef, podId));
+
+  return podFromSnap(docSnap);
+}
+
+export async function addUserToPod(
+  podId: string,
+  userId: string,
+): Promise<Pod> {
+  const pod = await getPod(podId);
+  if (!pod) throw new Error('pod does not exist!');
+
+  const newUsers = new Set(pod.users);
+  newUsers.add(userId);
+
+  return updatePod(podId, { users: [...newUsers] });
 }

@@ -1,4 +1,6 @@
-export function getInitials(name: string) {
+export function getInitials(name: string | null | undefined) {
+  if (!name) return 'UK';
+
   const split = name.split('');
   if (split.length >= 2) {
     return split[0].toUpperCase() + split[1].toUpperCase();

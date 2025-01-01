@@ -34,7 +34,10 @@ export async function addUser(user: User) {
   return docSnap.data() as User;
 }
 
-export async function updateUser(uid: string, update: Partial<User>): Promise<User> {
+export async function updateUser(
+  uid: string,
+  update: Partial<User>,
+): Promise<User> {
   await setDoc(doc(usersRef, uid), update, {
     merge: true,
   });
@@ -46,9 +49,9 @@ export async function updateUser(uid: string, update: Partial<User>): Promise<Us
 
 export async function addPodToUser(uid: string, podId: string): Promise<User> {
   const user = await getUser(uid);
-  if (!user) throw new Error("user does not exist!");
+  if (!user) throw new Error('user does not exist!');
 
-  const newPods = [...user?.pods, podId]
+  const newPods = [...user?.pods, podId];
 
   return await updateUser(uid, {
     pods: newPods,

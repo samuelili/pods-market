@@ -1,6 +1,7 @@
 import { BaseHTMLAttributes, PropsWithRef } from 'react';
 
 import styles from './Card.module.css';
+import {twMerge} from "tailwind-merge";
 
 export type CardProps = PropsWithRef<
   BaseHTMLAttributes<HTMLDivElement> & {
@@ -11,7 +12,7 @@ export type CardProps = PropsWithRef<
 const Card = ({ hover, className, ...props }: CardProps) => {
   return (
     <div
-      className={styles.Card + ' ' + className}
+      className={twMerge(styles.Card, className)}
       data-hover={hover ? true : undefined}
       {...props}
     />

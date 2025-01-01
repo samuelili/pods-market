@@ -1,10 +1,11 @@
 import Card from '@/components/card/Card.tsx';
-import { SubmitHandler, useForm } from 'react-hook-form';
+import {SubmitHandler, useForm} from 'react-hook-form';
 import Button from '@/components/buttons/Button.tsx';
-import { useCallback, useState } from 'react';
+import {useCallback, useState} from 'react';
 import Loading from '@/components/general/Loading.tsx';
-import { useNavigate, useSearch } from '@tanstack/react-router';
-import { createUser, login } from '@/logic/auth.ts';
+import {useNavigate, useSearch} from '@tanstack/react-router';
+import {createUser, login} from '@/logic/auth.ts';
+import {addUserToPod} from "@/logic/store/pods.ts";
 
 type Inputs = {
   email: string;
@@ -15,7 +16,7 @@ const LoginPage = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: {errors},
   } = useForm<Inputs>();
 
   const [createAccountMode, setCreateAccountMode] = useState(false);
@@ -27,16 +28,29 @@ const LoginPage = () => {
   });
 
   const onSubmit: SubmitHandler<Inputs> = useCallback(
-    async ({ email, password }) => {
+    async ({email, password}) => {
       setLoading(true);
       setError(null);
 
       try {
-        await (createAccountMode
+        const user = await (createAccountMode
           ? createUser(email, password)
           : login(email, password));
 
-        await navigate({ to: searchParams.redirect ?? '/' });
+        if (searchParams?.join) {
+          // if from a join
+          console.log('attempting to join pod');
+          await addUserToPod(searchParams.join, user!.uid);
+          console.log('pod joined');
+          await navigate({
+            to: "/pods/$podId", params: {
+              podId: searchParams.join
+            }
+          });
+        } else {
+          // just redirect normally
+          await navigate({to: searchParams?.redirect ?? '/'});
+        }
       } catch (e) {
         if (e instanceof Error) {
           setError(e.message);
@@ -48,13 +62,13 @@ const LoginPage = () => {
 
       setLoading(false);
     },
-    [createAccountMode, searchParams.redirect],
+    [navigate, createAccountMode, searchParams],
   );
 
   return (
     <div className={'mx-auto mt-16 max-w-lg p-layout'}>
       <Card className={'p-layout'}>
-        <h1 className={'text-center text-4xl'}>BuyDeez</h1>
+        <h1 className={'text-center text-4xl'}>Buy Deez</h1>
       </Card>
       <form className={'contents'} onSubmit={handleSubmit(onSubmit)}>
         <Card className={'mt-layout p-layout'}>
@@ -103,7 +117,7 @@ const LoginPage = () => {
           {!createAccountMode ? (
             <>
               <Button className={'heading w-full'} large={true} type={'submit'}>
-                {loading ? <Loading /> : 'Log in'}
+                {loading ? <Loading/> : 'Log in'}
               </Button>
               <p>Or</p>
               <Button
@@ -117,7 +131,7 @@ const LoginPage = () => {
           ) : (
             <>
               <Button className={'heading w-full'} large={true}>
-                {loading ? <Loading /> : 'Register'}
+                {loading ? <Loading/> : 'Register'}
               </Button>
               <p>Or</p>
               <Button

@@ -7,7 +7,9 @@ import {
   signOut,
 } from 'firebase/auth';
 import { addUser, getUser } from '@/logic/store/users.ts';
-import { User } from '@/types/User.ts'; // firebase setup
+import { User } from '@/types/User.ts';
+import {getQueryClient} from "@/logic/queryClient.ts";
+import queries from "@/logic/queries.ts"; // firebase setup
 
 // firebase setup
 const auth = getAuth();
@@ -54,7 +56,8 @@ export async function createUser(email: string, password: string) {
 
     // Signed up
     console.log('Created account with:', newUser);
-    user = newUser;
+    userId = newUser.uid;
+    await getQueryClient().setQueryData(queries.users.current.queryKey, user);
 
     return newUser;
   } catch (error) {
@@ -81,6 +84,8 @@ export async function login(email: string, password: string) {
 
     // Signed in
     const user = await getUser(userCredential.user.uid);
+    userId = user!.uid;
+    await getQueryClient().setQueryData(queries.users.current.queryKey, user);
 
     console.log('Logged in with:', user, userCredential);
 
@@ -100,6 +105,7 @@ export async function login(email: string, password: string) {
 export async function logout() {
   try {
     await signOut(auth);
+    await getQueryClient().invalidateQueries(queries.users.current);
 
     console.log('Logged out');
 
