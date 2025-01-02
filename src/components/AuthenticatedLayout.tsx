@@ -1,8 +1,9 @@
-import {Outlet, useSearch} from "@tanstack/react-router";
+import { Outlet, useSearch } from "@tanstack/react-router";
 import styles from "@/components/Root.module.css";
 import Navbar from "@/components/navbar/Navbar.tsx";
 import ListingDetailContent from "@/components/listing/ListingDetailContent.tsx";
 import djungelksogImg from "@/assets/images/djungelskog.png";
+import ListingPage from "./listing/ListingPage";
 
 const AuthenticatedLayout = () => {
   const search = useSearch({
@@ -22,14 +23,7 @@ const AuthenticatedLayout = () => {
 
         {showAdditionalContent && (
           <div className={styles.AdditionalContent}>
-            <ListingDetailContent
-              imageSrc={djungelksogImg}
-              name={'Djungelskog'}
-              price={16}
-              description={'very fluffy very soft lovely'}
-              sellerName={'Samuel Li'}
-              podName={'Pod'}
-            />
+            <ListingPage />
           </div>
         )}
       </div>

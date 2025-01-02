@@ -2,6 +2,7 @@ import { createQueryKeyStore } from '@lukemorales/query-key-factory';
 import { getUser } from '@/logic/store/users.ts';
 import { getPod, getPods } from '@/logic/store/pods.ts';
 import { firstCheckPromise } from '@/logic/auth.ts';
+import { getListing } from './store/listings';
 
 const queries = createQueryKeyStore({
   users: {
@@ -14,6 +15,12 @@ const queries = createQueryKeyStore({
         return await getUser(userId);
       },
     },
+    user: (userId: string) => ({
+      queryKey: [userId],
+      queryFn() {
+        return getUser(userId);
+      }
+    })
   },
   pods: {
     pod: (podId: string) => ({
@@ -29,6 +36,14 @@ const queries = createQueryKeyStore({
       },
     },
   },
+  listings: {
+    listing: (listingId: string) => ({
+      queryKey: [listingId],
+      queryFn() {
+        return getListing(listingId);
+      }
+    })
+  }
 });
 
 export default queries;
