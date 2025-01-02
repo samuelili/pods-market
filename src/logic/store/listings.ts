@@ -6,3 +6,11 @@ ensureAppInitialized();
 const db = getFirestore();
 
 const listingsRef = collection(db, "listings");
+
+type Listing = {
+  
+};
+
+export async function createListing() {
+
+}

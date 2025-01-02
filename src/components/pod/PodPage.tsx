@@ -6,14 +6,15 @@ import chelseaImg from '@/assets/images/chelsea.jpg';
 import Card from '@/components/card/Card.tsx';
 import { IconCards, IconPencil, IconUsersGroup } from '@tabler/icons-react';
 import { getRouteApi } from '@tanstack/react-router';
-import { user } from '@/logic/auth.ts';
 import Button from '@/components/buttons/Button.tsx';
 import InviteButton from '@/components/pod/InviteButton.tsx';
+import useCurrentUser from "@/logic/hooks/useCurrentUser.ts";
 
 const routeApi = getRouteApi('/_authenticated/pods/$podId');
 
 const PodPage = () => {
   const pod = routeApi.useLoaderData();
+  const user = useCurrentUser();
 
   if (!pod)
     return (
@@ -22,7 +23,7 @@ const PodPage = () => {
       </Card>
     );
 
-  const isModerator = pod.moderators.includes(user!.uid);
+  const isModerator = pod.moderators.includes(user.uid);
 
   return (
     <>
