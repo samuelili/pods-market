@@ -5,7 +5,7 @@ import queries from '@/logic/queries.ts';
 import { getInitials } from '@/logic/misc.ts';
 import Button from '@/components/buttons/Button.tsx';
 import { useCallback, useEffect, useState } from 'react';
-import { userId, userIdPromise } from '@/logic/auth.ts';
+import { userId, firstCheckPromise } from '@/logic/auth.ts';
 import { addUserToPod } from '@/logic/store/pods.ts';
 
 const JoinPodPage = () => {
@@ -16,7 +16,7 @@ const JoinPodPage = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   useEffect(() => {
     (async () => {
-      await userIdPromise;
+      await firstCheckPromise;
       setIsAuthenticated(userId !== '');
     })();
   }, []);

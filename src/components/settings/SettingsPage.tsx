@@ -1,12 +1,14 @@
 import Card from '../card/Card';
-import { logout, user } from '@/logic/auth.ts';
+import { logout } from '@/logic/auth.ts';
 import Button from '@/components/buttons/Button.tsx';
 import { useCallback, useState } from 'react';
 import Loading from '@/components/general/Loading.tsx';
 import { useNavigate } from '@tanstack/react-router';
+import useCurrentUser from '@/logic/hooks/useCurrentUser.ts';
 
 const SettingsPage = () => {
   const navigate = useNavigate();
+  const [user] = useCurrentUser();
 
   const [loggingOut, setLoggingOut] = useState(false);
   const [logoutError, setLogoutError] = useState<null | string>();
@@ -20,9 +22,6 @@ const SettingsPage = () => {
 
       await navigate({
         to: '/login',
-        search: {
-          redirect: null,
-        },
       });
 
       setLoggingOut(false);
@@ -37,7 +36,7 @@ const SettingsPage = () => {
 
   return (
     <Card className={'p-layout'}>
-      <h1 className={'text-2xl'}>Hello, {user!.name}</h1>
+      <h1 className={'text-2xl'}>Hello, {user.name}</h1>
       <Button onClick={() => !loggingOut && handleLogOut()}>
         {loggingOut ? <Loading /> : 'Sign Out'}
       </Button>

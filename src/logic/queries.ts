@@ -1,14 +1,14 @@
 import { createQueryKeyStore } from '@lukemorales/query-key-factory';
 import { getUser } from '@/logic/store/users.ts';
 import { getPod, getPods } from '@/logic/store/pods.ts';
-import { userIdPromise } from '@/logic/auth.ts';
+import { firstCheckPromise } from '@/logic/auth.ts';
 
 const queries = createQueryKeyStore({
   users: {
     current: {
       queryKey: null,
       async queryFn() {
-        const userId = await userIdPromise;
+        const userId = await firstCheckPromise;
         if (!userId) return null;
 
         return await getUser(userId);

@@ -8,23 +8,27 @@ import {
 } from 'firebase/auth';
 import { addUser, getUser } from '@/logic/store/users.ts';
 import { User } from '@/types/User.ts';
-import {getQueryClient} from "@/logic/queryClient.ts";
-import queries from "@/logic/queries.ts"; // firebase setup
+import { getQueryClient } from '@/logic/queryClient.ts';
+import queries from '@/logic/queries.ts'; // firebase setup
 
 // firebase setup
 const auth = getAuth();
+const queryClient = getQueryClient();
 
 /**
  * @deprecated
  */
 export let user: User | null = null;
-export let userId = "";
-export const userIdPromise = new Promise<string | null>((resolve) => {
+
+export let userId = '';
+export const firstCheckPromise = new Promise<string | null>((resolve) => {
   auth.onAuthStateChanged(async (incomingUser) => {
     if (incomingUser) {
       console.log('got auth user:', incomingUser);
 
-      user = await getUser(incomingUser.uid);
+      const user = await getUser(incomingUser.uid);
+      getQueryClient().setQueryData(queries.users.current.queryKey, user);
+
       userId = incomingUser.uid;
       resolve(incomingUser.uid);
     }
@@ -32,9 +36,19 @@ export const userIdPromise = new Promise<string | null>((resolve) => {
   });
 });
 
-export function setUser(newUser: User) {
-  user = newUser;
+export function getCurrentUser() {
+  return queryClient.getQueryData(
+    queries.users.current.queryKey,
+  ) as User | null;
 }
+
+export function setCurrentUser(user: User) {
+  return queryClient.setQueryData(queries.users.current.queryKey, user);
+}
+
+/* ==============================================
+ *              FIREBASE CALLS
+============================================== */
 
 export async function createUser(email: string, password: string) {
   try {

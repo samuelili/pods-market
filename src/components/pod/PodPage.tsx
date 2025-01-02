@@ -4,16 +4,11 @@ import ssdImg from '@/assets/images/ssd.png';
 import djungelskogImg from '@/assets/images/djungelskog.png';
 import chelseaImg from '@/assets/images/chelsea.jpg';
 import Card from '@/components/card/Card.tsx';
-import {
-  IconCards,
-  IconPencil,
-  IconUserPlus,
-  IconUsersGroup,
-} from '@tabler/icons-react';
+import { IconCards, IconPencil, IconUsersGroup } from '@tabler/icons-react';
 import { getRouteApi } from '@tanstack/react-router';
 import { user } from '@/logic/auth.ts';
 import Button from '@/components/buttons/Button.tsx';
-import InviteButton from "@/components/pod/InviteButton.tsx";
+import InviteButton from '@/components/pod/InviteButton.tsx';
 
 const routeApi = getRouteApi('/_authenticated/pods/$podId');
 

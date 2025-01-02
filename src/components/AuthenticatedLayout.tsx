@@ -8,8 +8,8 @@ const AuthenticatedLayout = () => {
   const search = useSearch({
     strict: false,
   });
-  const showPost = (search.postId?.length ?? 0) > 0;
-  const showUser = (search.userId?.length ?? 0) > 0;
+  const showPost = (search?.postId?.length ?? 0) > 0;
+  const showUser = (search?.userId?.length ?? 0) > 0;
   const showAdditionalContent = showPost || showUser;
 
   return (

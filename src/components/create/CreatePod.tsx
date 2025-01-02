@@ -4,10 +4,12 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import AvatarImageSelectCard from '@/components/create/AvatarImageSelectCard.tsx';
 import { useCallback, useState } from 'react';
 import { createPod, NewPod } from '@/logic/store/pods.ts';
-import { setUser, user } from '@/logic/auth.ts';
 import { useNavigate } from '@tanstack/react-router';
 import Loading from '@/components/general/Loading.tsx';
 import { addPodToUser } from '@/logic/store/users.ts';
+import useCurrentUser from "@/logic/hooks/useCurrentUser.ts";
+import {useQueryClient} from "@tanstack/react-query";
+import queries from "@/logic/queries.ts";
 
 type Inputs = {
   allPods: boolean;
@@ -28,8 +30,10 @@ const CreatePod = () => {
     handleSubmit,
     formState: { errors },
   } = useForm<Inputs>();
+  const queryClient = useQueryClient();
 
   const [loading, setLoading] = useState(false);
+  const [user] = useCurrentUser();
 
   const onSubmit: SubmitHandler<Inputs> = useCallback(async (data) => {
     setLoading(true);
@@ -38,12 +42,14 @@ const CreatePod = () => {
       name: data.name,
       description: data.description,
       socials: [],
-      users: [user!.uid],
-      moderators: [user!.uid],
+      users: [user.uid],
+      moderators: [user.uid],
     };
 
     const pod = await createPod(newPod);
-    setUser(await addPodToUser(user!.uid, pod.uid));
+    await addPodToUser(user!.uid, pod.uid);
+    await queryClient.invalidateQueries(queries.users.current);
+
 
     await navigate({
       to: '/pods/$podId',
@@ -53,7 +59,7 @@ const CreatePod = () => {
     });
 
     setLoading(false);
-  }, [user, navigate]);
+  }, [user, navigate, queryClient]);
 
   return (
     <form className={'contents'} onSubmit={handleSubmit(onSubmit)}>
