@@ -2,8 +2,6 @@ import Card from '@/components/card/Card.tsx';
 import styles from '@/components/Root.module.css';
 import ListingCard from '@/components/listing/ListingCard.tsx';
 import ssdImg from '@/assets/images/ssd.png';
-import djungelskogImg from '@/assets/images/djungelskog.png';
-import chelseaImg from '@/assets/images/chelsea.jpg';
 import { useQuery } from '@tanstack/react-query';
 import queries from '@/logic/queries';
 
@@ -16,7 +14,7 @@ const AllListings = () => {
         <h1 className={'text-4xl'}>All Listings</h1>
       </Card>
       <div className={'mt-4 ' + styles.ListingGrid}>
-        {listings?.map((listing) =>
+        {listings?.map((listing) => (
           <ListingCard
             key={listing.uid}
             name={listing.title}
@@ -26,8 +24,8 @@ const AllListings = () => {
             listingId={listing.uid}
             imageSrc={ssdImg}
             userId={listing.userId}
-          />)}
-
+          />
+        ))}
       </div>
     </>
   );

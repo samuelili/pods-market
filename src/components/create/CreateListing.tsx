@@ -55,7 +55,7 @@ const CreateListing = () => {
 
     navigate({
       to: '/pods/all',
-      search: { postId: listing.uid }
+      search: { postId: listing?.uid }
     })
   };
 

@@ -1,14 +1,12 @@
 import styles from '@/components/Root.module.css';
 import ListingCard from '@/components/listing/ListingCard.tsx';
 import ssdImg from '@/assets/images/ssd.png';
-import djungelskogImg from '@/assets/images/djungelskog.png';
-import chelseaImg from '@/assets/images/chelsea.jpg';
 import Card from '@/components/card/Card.tsx';
 import { IconCards, IconPencil, IconUsersGroup } from '@tabler/icons-react';
 import { getRouteApi } from '@tanstack/react-router';
 import Button from '@/components/buttons/Button.tsx';
 import InviteButton from '@/components/pod/InviteButton.tsx';
-import useCurrentUser from "@/logic/hooks/useCurrentUser.ts";
+import useCurrentUser from '@/logic/hooks/useCurrentUser.ts';
 import { useQuery } from '@tanstack/react-query';
 import queries from '@/logic/queries';
 
