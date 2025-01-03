@@ -1,6 +1,8 @@
 import styles from './ListingCard.module.css';
 import Card, { CardProps } from '@/components/card/Card.tsx';
 import PosterWidget from '@/components/general/PosterWidget.tsx';
+import queries from '@/logic/queries';
+import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 
 export type ListingCardProps = CardProps & {
@@ -9,7 +11,8 @@ export type ListingCardProps = CardProps & {
   price: number;
   description: string;
   podName: string;
-  sellerName: string;
+  userId: string;
+  listingId: string;
 };
 
 const ListingCard = ({
@@ -18,14 +21,17 @@ const ListingCard = ({
   price,
   description,
   podName,
-  sellerName,
+  userId,
+  listingId,
   ...props
 }: ListingCardProps) => {
+  const { data: user } = useQuery(queries.users.user(userId))
+
   return (
     <Link
       to={'.'}
       search={{
-        postId: 'asdf',
+        postId: listingId,
       }}
     >
       <Card className={styles.ListingCard} hover={true} {...props}>
@@ -43,7 +49,7 @@ const ListingCard = ({
           <PosterWidget
             className={'mt-2'}
             src={''}
-            sellerName={sellerName}
+            sellerName={user?.name ?? ""}
             podName={podName}
           />
         </div>

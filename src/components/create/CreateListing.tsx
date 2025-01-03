@@ -3,20 +3,30 @@ import Button from '@/components/buttons/Button.tsx';
 import { useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import ImagesSelectCard from '@/components/create/ImagesSelectCard.tsx';
+import { useQuery } from '@tanstack/react-query';
+import queries from '@/logic/queries';
+import Loading from '../general/Loading';
+import { createListing, NewListing } from '@/logic/store/listings';
+import useCurrentUser from '@/logic/hooks/useCurrentUser';
+import { useNavigate } from '@tanstack/react-router';
 
 type Inputs = {
   allPods: boolean;
 
-  images: File[];
+  images?: File[];
 
   title: string;
-  price: number;
+  price: string;
   description: string;
   location: string;
 };
 
 const CreateListing = () => {
-  const [pods, setPods] = useState<Set<string>>(new Set());
+  const { data: pods } = useQuery(queries.pods.all);
+  const [selectedPods, setSelectedPods] = useState<Set<string>>(new Set());
+
+  const [user] = useCurrentUser();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -25,16 +35,38 @@ const CreateListing = () => {
     watch,
     formState: { errors },
   } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+
+  const [loading, setLoading] = useState(false);
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    const newListing: NewListing = {
+      allPods: data.allPods,
+      podIds: [...selectedPods],
+      images: [],
+      title: data.title,
+      price: parseInt(data.price),
+      description: data.description,
+      location: data.location,
+      userId: user.uid
+    }
+
+    setLoading(true);
+    const listing = await createListing(newListing);
+    setLoading(false);
+
+    navigate({
+      to: '/pods/all',
+      search: { postId: listing.uid }
+    })
+  };
 
   const handlePodToggle = (podId: string) => {
-    const newPods = new Set(pods);
-    if (pods.has(podId)) {
+    const newPods = new Set(selectedPods);
+    if (selectedPods.has(podId)) {
       newPods.delete(podId);
     } else {
       newPods.add(podId);
     }
-    setPods(newPods);
+    setSelectedPods(newPods);
   };
 
   console.log(Object.values(errors)[0]);
@@ -55,17 +87,17 @@ const CreateListing = () => {
             All Pods
           </label>
 
-          {!watch('allPods') &&
-            [0, 1, 2].map((i) => (
+          {!watch('allPods') && pods !== undefined &&
+            pods.map((pod, i) => (
               <label className={'flex items-center'} key={i}>
                 <input
                   type={'checkbox'}
                   className={'mr-2'}
-                  checked={pods.has(`${i}`)}
-                  onChange={() => handlePodToggle(`${i}`)}
+                  checked={selectedPods.has(pod.uid)}
+                  onChange={() => handlePodToggle(pod.uid)}
                 />
                 <div className={'mr-2 h-8 w-8 rounded-full bg-img'} />
-                {i}th Pod
+                {pod.name}
               </label>
             ))}
         </div>
@@ -81,9 +113,9 @@ const CreateListing = () => {
         </h3>
         <Controller
           control={control}
-          rules={{
-            required: 'Please provide at least 1 image',
-          }}
+          // rules={{
+          //   required: 'Please provide at least 1 image',
+          // }}
           render={({ field: { onChange, value } }) => (
             <ImagesSelectCard files={value} onFilesChange={onChange} />
           )}
@@ -161,7 +193,7 @@ const CreateListing = () => {
             'heading h-[4rem] w-full items-center justify-center text-2xl'
           }
         >
-          3. Create!
+          {loading ? <Loading /> : '3. Create'}
         </Button>
       </Card>
     </form>
