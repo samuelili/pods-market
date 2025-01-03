@@ -9,12 +9,19 @@ import { getRouteApi } from '@tanstack/react-router';
 import Button from '@/components/buttons/Button.tsx';
 import InviteButton from '@/components/pod/InviteButton.tsx';
 import useCurrentUser from "@/logic/hooks/useCurrentUser.ts";
+import { useQuery } from '@tanstack/react-query';
+import queries from '@/logic/queries';
 
 const routeApi = getRouteApi('/_authenticated/pods/$podId');
 
 const PodPage = () => {
   const pod = routeApi.useLoaderData();
-  const user = useCurrentUser();
+  const [user] = useCurrentUser();
+
+  const { data: listings } = useQuery({
+    ...queries.listings.pod(pod?.uid ?? ""),
+    enabled: pod?.uid !== undefined
+  });
 
   if (!pod)
     return (
@@ -35,7 +42,7 @@ const PodPage = () => {
           <h1 className={'flex-1 text-4xl'}>{pod.name}</h1>
 
           <div className={'flex gap-2'}>
-            <InviteButton/>
+            <InviteButton />
             {isModerator && (
               <Button className={'p-2'}>
                 <IconPencil />
@@ -64,33 +71,16 @@ const PodPage = () => {
         <p className={'mt-4'}>{pod.description}</p>
       </Card>
       <div className={'mt-4 ' + styles.ListingGrid}>
-        <ListingCard
-          name={'512GB Samsung SSD'}
-          description={
-            "I got them when a company liquidated but they're a little used"
-          }
-          podName={'Sorrentoes'}
-          price={20}
-          imageSrc={ssdImg}
-          sellerName={'Samuel'}
-        />
-        <ListingCard
-          name={'Djungelskog'}
-          description={'very fresh not squished very huggable lovely'}
-          podName={'Janky Left Cheek'}
-          price={16}
-          imageSrc={djungelskogImg}
-          sellerName={'Shmuel'}
-        />
-
-        <ListingCard
-          name={'Chelsea - 2008 Scion xD'}
-          description={"goodbye :'("}
-          podName={'AACF'}
-          price={5000}
-          imageSrc={chelseaImg}
-          sellerName={'Samuel'}
-        />
+        {listings?.map((listing) =>
+          <ListingCard
+            key={listing.uid}
+            name={listing.title}
+            description={listing.description}
+            podName={''}
+            price={listing.price}
+            imageSrc={ssdImg}
+            userId={listing.userId}
+          />)}
       </div>
     </>
   );

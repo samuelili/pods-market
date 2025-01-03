@@ -11,8 +11,8 @@ const ListingPage = () => {
 
     const { data: listing } = useQuery(queries.listings.listing(search?.postId!));
     const { data: seller } = useQuery({
-        ...queries.users.user(listing?.user ?? ""),
-        enabled: listing?.user !== null && listing?.user !== undefined
+        ...queries.users.user(listing?.userId ?? ""),
+        enabled: listing?.userId !== null && listing?.userId !== undefined
     });
 
     if (!listing || !seller) return (

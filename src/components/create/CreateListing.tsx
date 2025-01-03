@@ -39,13 +39,14 @@ const CreateListing = () => {
   const [loading, setLoading] = useState(false);
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     const newListing: NewListing = {
-      pod: '',
+      allPods: data.allPods,
+      podIds: [...selectedPods],
       images: [],
       title: data.title,
       price: parseInt(data.price),
       description: data.description,
       location: data.location,
-      user: user.uid
+      userId: user.uid
     }
 
     setLoading(true);
