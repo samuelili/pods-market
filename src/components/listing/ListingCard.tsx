@@ -12,6 +12,7 @@ export type ListingCardProps = CardProps & {
   description: string;
   podName: string;
   userId: string;
+  listingId: string;
 };
 
 const ListingCard = ({
@@ -21,6 +22,7 @@ const ListingCard = ({
   description,
   podName,
   userId,
+  listingId,
   ...props
 }: ListingCardProps) => {
   const { data: user } = useQuery(queries.users.user(userId))
@@ -29,7 +31,7 @@ const ListingCard = ({
     <Link
       to={'.'}
       search={{
-        postId: 'asdf',
+        postId: listingId,
       }}
     >
       <Card className={styles.ListingCard} hover={true} {...props}>

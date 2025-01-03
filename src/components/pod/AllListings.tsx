@@ -23,6 +23,7 @@ const AllListings = () => {
             description={listing.description}
             podName={''}
             price={listing.price}
+            listingId={listing.uid}
             imageSrc={ssdImg}
             userId={listing.userId}
           />)}

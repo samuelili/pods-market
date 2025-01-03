@@ -74,6 +74,7 @@ const PodPage = () => {
         {listings?.map((listing) =>
           <ListingCard
             key={listing.uid}
+            listingId={listing.uid}
             name={listing.title}
             description={listing.description}
             podName={''}
