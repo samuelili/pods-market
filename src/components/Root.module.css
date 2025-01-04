@@ -1,11 +1,15 @@
 .Root {
     display: grid;
-    grid-template-columns: min-content 1fr auto;
+    grid-template-columns: min-content 1fr;
     padding: 1rem;
     min-height: 100vh;
     gap: 1rem;
 
     transition: all 220ms;
+
+    &[data-additional~="true"] {
+        grid-template-columns: min-content 2fr 1fr;
+    }
 }
 
 .Background {
@@ -66,7 +70,7 @@
     background: rgba(50, 53, 58, 0.2);
     backdrop-filter: blur(16px);
     border-radius: 0.75rem;
-    max-width: 32rem;
+    width: 100%;
     padding: inherit;
 }
 
@@ -88,10 +92,6 @@
 
             .Content {
                 display: none;
-            }
-
-            .AdditionalContent {
-                max-width: initial;
             }
         }
     }

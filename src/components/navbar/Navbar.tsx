@@ -13,12 +13,16 @@ import {
 import LinkButton from '@/components/buttons/LinkButton.tsx';
 import { useQuery } from '@tanstack/react-query';
 import queries from '@/logic/queries.ts';
-import {getInitials} from "@/logic/misc.ts";
+import { getInitials } from '@/logic/misc.ts';
+import { useParams } from '@tanstack/react-router';
 
 const Navbar = ({
   className,
   ...props
 }: BaseHTMLAttributes<HTMLDivElement>) => {
+  const params = useParams({
+    strict: false,
+  });
   const { data: pods } = useQuery(queries.pods.all);
 
   return (
@@ -82,9 +86,10 @@ const Navbar = ({
 
       {pods &&
         pods.map((pod) => (
-          <Tooltip placement={'right'} offset={16}>
+          <Tooltip placement={'right'} offset={16} key={pod.uid}>
             <TooltipTrigger asChild={true}>
               <LinkButton
+                selected={params.podId === pod.uid}
                 to={'/pods/$podId'}
                 params={{
                   podId: pod.uid,
@@ -92,7 +97,9 @@ const Navbar = ({
                 className={
                   'flex h-[3rem] w-[3rem] items-center justify-center rounded-full bg-img'
                 }
-              >{getInitials(pod.name)}</LinkButton>
+              >
+                {getInitials(pod.name)}
+              </LinkButton>
             </TooltipTrigger>
             <TooltipContent>{pod.name}</TooltipContent>
           </Tooltip>

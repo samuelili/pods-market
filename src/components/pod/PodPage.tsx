@@ -1,6 +1,5 @@
 import styles from '@/components/Root.module.css';
 import ListingCard from '@/components/listing/ListingCard.tsx';
-import ssdImg from '@/assets/images/ssd.png';
 import Card from '@/components/card/Card.tsx';
 import { IconCards, IconPencil, IconUsersGroup } from '@tabler/icons-react';
 import { getRouteApi } from '@tanstack/react-router';
@@ -17,8 +16,8 @@ const PodPage = () => {
   const [user] = useCurrentUser();
 
   const { data: listings } = useQuery({
-    ...queries.listings.pod(pod?.uid ?? ""),
-    enabled: pod?.uid !== undefined
+    ...queries.listings.pod(pod?.uid ?? ''),
+    enabled: pod?.uid !== undefined,
   });
 
   if (!pod)
@@ -50,11 +49,12 @@ const PodPage = () => {
         </div>
         <div className={'mt-4 flex flex-wrap gap-4'}>
           <div className={'flex flex-wrap gap-2'}>
-            <IconCards />3 Listings
+            <IconCards />
+            {listings?.length} Listing{listings?.length !== 1 && "s"}
           </div>
           <div className={'flex flex-wrap gap-2'}>
             <IconUsersGroup />
-            {pod.users.length} Members
+            {pod.users.length} Member{pod.users.length !== 1 && "s"}
           </div>
           {/*<Button className={'-m-2 bg-transparent p-2'}>*/}
           {/*  <IconBrandDiscord />*/}
@@ -69,17 +69,9 @@ const PodPage = () => {
         <p className={'mt-4'}>{pod.description}</p>
       </Card>
       <div className={'mt-4 ' + styles.ListingGrid}>
-        {listings?.map((listing) =>
-          <ListingCard
-            key={listing.uid}
-            listingId={listing.uid}
-            name={listing.title}
-            description={listing.description}
-            podName={''}
-            price={listing.price}
-            imageSrc={ssdImg}
-            userId={listing.userId}
-          />)}
+        {listings?.map((listing) => (
+          <ListingCard key={listing.uid} listing={listing} />
+        ))}
       </div>
     </>
   );

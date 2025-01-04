@@ -9,11 +9,12 @@ import Loading from '../general/Loading';
 import { createListing, NewListing } from '@/logic/store/listings';
 import useCurrentUser from '@/logic/hooks/useCurrentUser';
 import { useNavigate } from '@tanstack/react-router';
+import { uploadListingImages } from '@/logic/storage';
 
 type Inputs = {
   allPods: boolean;
 
-  images?: File[];
+  images: File[];
 
   title: string;
   price: string;
@@ -38,25 +39,29 @@ const CreateListing = () => {
 
   const [loading, setLoading] = useState(false);
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    if (!pods) return;
+    setLoading(true);
+
+    // first, upload files
+    const uploadResults = await uploadListingImages(data.images);
+
     const newListing: NewListing = {
-      allPods: data.allPods,
-      podIds: [...selectedPods],
-      images: [],
+      podIds: data.allPods ? pods.map((pod) => pod.uid) : [...selectedPods],
+      imageUrls: uploadResults.map((result) => result.ref.fullPath),
       title: data.title,
       price: parseInt(data.price),
       description: data.description,
       location: data.location,
-      userId: user.uid
-    }
-
-    setLoading(true);
+      userId: user.uid,
+    };
     const listing = await createListing(newListing);
-    setLoading(false);
 
-    navigate({
+    await navigate({
       to: '/pods/all',
-      search: { postId: listing?.uid }
-    })
+      search: { postId: listing?.uid },
+    });
+
+    setLoading(false);
   };
 
   const handlePodToggle = (podId: string) => {
@@ -87,7 +92,8 @@ const CreateListing = () => {
             All Pods
           </label>
 
-          {!watch('allPods') && pods !== undefined &&
+          {!watch('allPods') &&
+            pods !== undefined &&
             pods.map((pod, i) => (
               <label className={'flex items-center'} key={i}>
                 <input
@@ -113,9 +119,9 @@ const CreateListing = () => {
         </h3>
         <Controller
           control={control}
-          // rules={{
-          //   required: 'Please provide at least 1 image',
-          // }}
+          rules={{
+            required: 'Please provide at least 1 image',
+          }}
           render={({ field: { onChange, value } }) => (
             <ImagesSelectCard files={value} onFilesChange={onChange} />
           )}
@@ -161,7 +167,9 @@ const CreateListing = () => {
         <label className={'mt-layout block'}>
           <h3 className={'text-lg'}>
             Description
-            <p className={'text-sm text-red-300'}>{errors.description?.message}</p>
+            <p className={'text-sm text-red-300'}>
+              {errors.description?.message}
+            </p>
           </h3>
           <textarea
             className={'mt-2'}

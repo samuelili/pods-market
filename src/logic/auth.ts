@@ -15,11 +15,6 @@ import queries from '@/logic/queries.ts'; // firebase setup
 const auth = getAuth();
 const queryClient = getQueryClient();
 
-/**
- * @deprecated
- */
-export let user: User | null = null;
-
 export let userId = '';
 export const firstCheckPromise = new Promise<string | null>((resolve) => {
   auth.onAuthStateChanged(async (incomingUser) => {

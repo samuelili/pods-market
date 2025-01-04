@@ -12,14 +12,12 @@ export type Listing = {
     title: string;
 
     userId: string;
-
-    allPods: boolean;
     podIds: string[];
 
     location: string;
     price: number;
     description: string;
-    images: string[];
+    imageUrls: string[];
 };
 
 export type NewListing = Omit<Listing, 'uid'>;

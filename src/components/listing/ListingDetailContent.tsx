@@ -13,26 +13,32 @@ import Button from '@/components/buttons/Button.tsx';
 import styles from './ListingDetailContent.module.css';
 import LinkButton from '@/components/buttons/LinkButton.tsx';
 import { useMatches } from '@tanstack/react-router';
+import FirebaseImage from '@/components/misc/FirebaseImage.tsx';
+import { Listing } from '@/logic/store/listings.ts';
+import { User } from '@/types/User.ts';
+import { Pod } from '@/logic/store/pods.ts';
+import { useEffect, useState } from 'react';
 
 export type ListingDetailContentProps = {
-  imageSrc?: string;
-  name: string;
-  price: number;
-  description: string;
-  sellerName: string;
-  podName: string;
+  listing: Listing;
+  seller: User;
+  pod: Pod;
 };
 
 const ListingDetailContent = ({
-  imageSrc,
-  name,
-  price,
-  description,
-  sellerName,
-  podName,
+  listing,
+  seller,
+  pod,
 }: ListingDetailContentProps) => {
   const matches = useMatches();
   const backPath = matches[matches.length - 1].fullPath;
+
+  const [imageIndex, setImageIndex] = useState(0);
+
+  // reset if listing uid changes
+  useEffect(() => {
+    setImageIndex(0);
+  }, [listing.uid]);
 
   return (
     <>
@@ -48,40 +54,51 @@ const ListingDetailContent = ({
         Back
       </LinkButton>
       <div className={'relative mt-layout ' + styles.Image}>
-        <Button
-          className={
-            'absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-transparent p-1'
-          }
-        >
-          <IconChevronLeft />
-        </Button>
+        {imageIndex > 0 && (
+          <Button
+            className={
+              'absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-transparent p-1'
+            }
+            onClick={() => {
+              setImageIndex(Math.max(0, imageIndex - 1));
+            }}
+          >
+            <IconChevronLeft />
+          </Button>
+        )}
 
-        <img
+        <FirebaseImage
           className={'h-full w-full rounded-md object-contain'}
-          src={imageSrc}
-          alt={name}
+          path={listing.imageUrls[imageIndex]}
         />
 
-        <Button
-          className={
-            'absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-transparent p-1'
-          }
-        >
-          <IconChevronRight />
-        </Button>
+        {imageIndex < listing.imageUrls.length - 1 && (
+          <Button
+            className={
+              'absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-transparent p-1'
+            }
+            onClick={() => {
+              setImageIndex(
+                Math.min(listing.imageUrls.length - 1, imageIndex + 1),
+              );
+            }}
+          >
+            <IconChevronRight />
+          </Button>
+        )}
       </div>
       <div className={'px-1 pb-1'}>
         <div className={'mt-2 flex items-center justify-between'}>
-          <h2 className={styles.Name}>{name}</h2>
+          <h2 className={styles.Name}>{listing.title}</h2>
 
-          <h2 className={styles.Price}>${price}</h2>
+          <h2 className={styles.Price}>${listing.price}</h2>
         </div>
 
         <div className={'grid grid-cols-[1fr_auto] pt-2'}>
           <div className={'mt-2 flex items-center gap-2'}>
             <IconUser />
             <div className={'h-10 w-10 rounded-full bg-img'} />
-            <p className={'flex-1 leading-tight'}>{sellerName}</p>
+            <p className={'flex-1 leading-tight'}>{seller.name}</p>
           </div>
 
           <div className={'mt-2 flex items-center gap-2'}>
@@ -92,7 +109,7 @@ const ListingDetailContent = ({
           <div className={'mt-2 flex items-center gap-2'}>
             <IconUsersGroup />
             <div className={'h-10 w-10 rounded-full bg-img'} />
-            <p className={'flex-1 leading-tight'}>{podName}</p>
+            <p className={'flex-1 leading-tight'}>{pod.name}</p>
           </div>
 
           <div className={'mt-2 flex items-center gap-2'}>
@@ -100,7 +117,7 @@ const ListingDetailContent = ({
             <p className={'flex-1 leading-tight'}>12 mi.</p>
           </div>
         </div>
-        <p className={'mt-4 ' + styles.Description}>{description}</p>
+        <p className={'mt-4 ' + styles.Description}>{listing.description}</p>
         <Button className={'mt-4 w-full justify-center py-3 text-center'}>
           <IconMessage /> Contact
         </Button>

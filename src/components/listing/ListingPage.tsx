@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import ListingDetailContent from './ListingDetailContent';
-import djungelksogImg from '@/assets/images/djungelskog.png';
 import queries from '@/logic/queries';
 import { useSearch } from '@tanstack/react-router';
 
@@ -19,19 +18,10 @@ const ListingPage = () => {
     enabled: listing !== undefined,
   });
 
-  if (!listing || !seller)
+  if (!listing || !seller || !pod)
     return <h1 className="text-2xl">listing not found ;-;</h1>;
 
-  return (
-    <ListingDetailContent
-      imageSrc={djungelksogImg}
-      name={listing.title}
-      price={listing.price}
-      description={listing.description}
-      sellerName={seller.name}
-      podName={pod?.name ?? ""}
-    />
-  );
+  return <ListingDetailContent listing={listing} seller={seller} pod={pod} />;
 };
 
 export default ListingPage;
