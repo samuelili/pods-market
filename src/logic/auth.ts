@@ -37,7 +37,7 @@ export function getCurrentUser() {
   ) as User | null;
 }
 
-export function setCurrentUser(user: User) {
+export function setCurrentUser(user: User | undefined) {
   return queryClient.setQueryData(queries.users.current.queryKey, user);
 }
 
@@ -66,7 +66,7 @@ export async function createUser(email: string, password: string) {
     // Signed up
     console.log('Created account with:', newUser);
     userId = newUser.uid;
-    await getQueryClient().setQueryData(queries.users.current.queryKey, user);
+    setCurrentUser(newUser);
 
     return newUser;
   } catch (error) {
@@ -94,7 +94,7 @@ export async function login(email: string, password: string) {
     // Signed in
     const user = await getUser(userCredential.user.uid);
     userId = user!.uid;
-    await getQueryClient().setQueryData(queries.users.current.queryKey, user);
+    setCurrentUser(user!);
 
     console.log('Logged in with:', user, userCredential);
 
@@ -118,7 +118,7 @@ export async function logout() {
 
     console.log('Logged out');
 
-    user = null;
+    setCurrentUser(undefined);
   } catch (error) {
     if (
       error &&

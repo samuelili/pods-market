@@ -5,7 +5,7 @@ import queries from '@/logic/queries';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Listing } from '@/logic/store/listings.ts';
-import FirebaseImage from '@/components/misc/FirebaseImage.tsx';
+import FirebaseImage from '@/components/general/FirebaseImage.tsx';
 
 export type ListingCardProps = CardProps & {
   listing: Listing;
@@ -44,7 +44,7 @@ const ListingCard = ({ listing, ...props }: ListingCardProps) => {
 
           <PosterWidget
             className={'mt-2'}
-            src={''}
+            path={seller?.avatar ?? null}
             sellerName={seller?.name ?? ''}
             podName={pod?.name ?? ''}
           />

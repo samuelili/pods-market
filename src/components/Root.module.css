@@ -12,16 +12,16 @@
     }
 }
 
-.Background {
-    position: fixed;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    background-image: url("../assets/background.jpg");
-    background-size: cover;
-    z-index: -1;
-}
+/*.Background {*/
+/*    position: fixed;*/
+/*    left: 0;*/
+/*    top: 0;*/
+/*    right: 0;*/
+/*    bottom: 0;*/
+/*    !*background-image: url("../assets/background.jpg");*!*/
+/*    background-size: cover;*/
+/*    z-index: -1;*/
+/*}*/
 
 .Navbar {
     display: flex;
@@ -43,7 +43,8 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
     gap: 0.5rem;
-    margin: 0 auto;
+    margin-left: auto;
+    margin-right: auto;
     justify-items: center;
 
     & > * {

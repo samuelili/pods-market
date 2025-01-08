@@ -1,15 +1,18 @@
 import { twMerge } from 'tailwind-merge';
 import PreviewFile from '@/components/general/PreviewFile.tsx';
-import { IconPhotoPlus } from '@tabler/icons-react';
+import {IconPhotoOff, IconPhotoPlus} from '@tabler/icons-react';
 import Card, { CardProps } from '@/components/card/Card.tsx';
 import { ChangeEvent, DragEvent, useCallback, useState } from 'react';
+import FirebaseImage from "@/components/general/FirebaseImage.tsx";
 
 export type AvatarImageSelectProps = CardProps & {
+  currentAvatar?: string | null;
   file: File | undefined;
   onFileChange: (file: File) => void;
 };
 
 const AvatarImageSelectCard = ({
+  currentAvatar,
   file,
   onFileChange,
   className,
@@ -62,13 +65,15 @@ const AvatarImageSelectCard = ({
     >
       <div
         className={
-          'flex h-24 w-24 items-center justify-center rounded-full bg-img text-4xl overflow-hidden'
+          'flex h-24 w-24 items-center justify-center overflow-hidden rounded-full bg-img text-4xl'
         }
       >
         {file ? (
           <PreviewFile file={file} className={'h-full w-full object-cover'} />
+        ) : currentAvatar ? (
+          <FirebaseImage path={currentAvatar} className={'h-full w-full object-cover'}/>
         ) : (
-          'SL'
+          <IconPhotoOff/>
         )}
       </div>
       <Card

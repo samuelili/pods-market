@@ -13,11 +13,12 @@ import Button from '@/components/buttons/Button.tsx';
 import styles from './ListingDetailContent.module.css';
 import LinkButton from '@/components/buttons/LinkButton.tsx';
 import { useMatches } from '@tanstack/react-router';
-import FirebaseImage from '@/components/misc/FirebaseImage.tsx';
+import FirebaseImage from '@/components/general/FirebaseImage.tsx';
 import { Listing } from '@/logic/store/listings.ts';
 import { User } from '@/types/User.ts';
 import { Pod } from '@/logic/store/pods.ts';
 import { useEffect, useState } from 'react';
+import Avatar from '@/components/general/Avatar.tsx';
 
 export type ListingDetailContentProps = {
   listing: Listing;
@@ -97,7 +98,7 @@ const ListingDetailContent = ({
         <div className={'grid grid-cols-[1fr_auto] pt-2'}>
           <div className={'mt-2 flex items-center gap-2'}>
             <IconUser />
-            <div className={'h-10 w-10 rounded-full bg-img'} />
+            <Avatar name={seller.name} path={seller.avatar} />
             <p className={'flex-1 leading-tight'}>{seller.name}</p>
           </div>
 
@@ -108,7 +109,7 @@ const ListingDetailContent = ({
 
           <div className={'mt-2 flex items-center gap-2'}>
             <IconUsersGroup />
-            <div className={'h-10 w-10 rounded-full bg-img'} />
+            <Avatar name={pod.name} path={pod.photoUrl} />
             <p className={'flex-1 leading-tight'}>{pod.name}</p>
           </div>
 

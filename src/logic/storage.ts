@@ -19,6 +19,10 @@ export async function uploadFile(folderRef: StorageReference, file: File) {
   return await uploadBytes(ref(folderRef, file.name), file);
 }
 
+export async function uploadUserAvatarImage(file: File) {
+  return uploadFile(userProfileImagesRef, file);
+}
+
 export async function uploadListingImages(files: File[]) {
   return Promise.all(files.map((file) => uploadFile(listingImagesRef, file)));
 }
