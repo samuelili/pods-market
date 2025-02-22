@@ -7,7 +7,6 @@ const queryClient = getQueryClient();
 const Root = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      {/*<div className={styles.Background} />*/}
       <Outlet />
     </QueryClientProvider>
   );

@@ -3,7 +3,6 @@ import {
   IconChevronLeft,
   IconChevronRight,
   IconMapPin,
-  IconMessage,
   IconRuler2,
   IconUser,
   IconUsersGroup,
@@ -19,6 +18,7 @@ import { User } from '@/types/User.ts';
 import { Pod } from '@/logic/store/pods.ts';
 import { useEffect, useState } from 'react';
 import Avatar from '@/components/general/Avatar.tsx';
+import ListingSendRequest from '@/components/listing/ListingSendRequest.tsx';
 
 export type ListingDetailContentProps = {
   listing: Listing;
@@ -119,9 +119,7 @@ const ListingDetailContent = ({
           </div>
         </div>
         <p className={'mt-4 ' + styles.Description}>{listing.description}</p>
-        <Button className={'mt-4 w-full justify-center py-3 text-center'}>
-          <IconMessage /> Contact
-        </Button>
+        <ListingSendRequest listing={listing} />
       </div>
     </>
   );

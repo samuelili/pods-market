@@ -3,6 +3,7 @@ import { getUser } from '@/logic/store/users.ts';
 import { getPod, getPods } from '@/logic/store/pods.ts';
 import { firstCheckPromise } from '@/logic/auth.ts';
 import { getAllListings, getListing, getPodListings } from './store/listings';
+import {getAllRequests} from "@/logic/store/requests.ts";
 
 const queries = createQueryKeyStore({
   users: {
@@ -54,6 +55,14 @@ const queries = createQueryKeyStore({
       queryFn() {
         return getAllListings();
       },
+    }
+  },
+  requests: {
+    all: {
+      queryKey: null,
+      queryFn() {
+        return getAllRequests();
+      }
     }
   }
 });

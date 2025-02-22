@@ -9,7 +9,7 @@ import useCurrentUser from '@/logic/hooks/useCurrentUser.ts';
 import { useQuery } from '@tanstack/react-query';
 import queries from '@/logic/queries';
 
-const routeApi = getRouteApi('/_authenticated/pods/$podId');
+const routeApi = getRouteApi('/_authenticated/_shopping/pods/$podId');
 
 const PodPage = () => {
   const pod = routeApi.useLoaderData();

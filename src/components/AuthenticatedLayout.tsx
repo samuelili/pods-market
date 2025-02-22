@@ -1,4 +1,4 @@
-import { Outlet, useSearch } from '@tanstack/react-router';
+import { Outlet, useMatches, useSearch } from '@tanstack/react-router';
 import styles from '@/components/Root.module.css';
 import Navbar from '@/components/navbar/Navbar.tsx';
 import ListingPage from './listing/ListingPage';
@@ -7,7 +7,12 @@ const AuthenticatedLayout = () => {
   const search = useSearch({
     strict: false,
   });
-  const showPost = (search?.postId?.length ?? 0) > 0;
+  const matches = useMatches();
+  console.log(matches);
+  const isShopping =
+    matches.find((match) => match.id.includes('/_authenticated/_shopping')) !==
+    undefined;
+  const showPost = isShopping && (search?.postId?.length ?? 0) > 0;
   const showUser = (search?.userId?.length ?? 0) > 0;
   const showAdditionalContent = showPost || showUser;
 
@@ -27,6 +32,6 @@ const AuthenticatedLayout = () => {
       </div>
     </>
   );
-}
+};
 
 export default AuthenticatedLayout;

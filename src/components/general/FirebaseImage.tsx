@@ -5,29 +5,46 @@ export type FirebaseImageProps = Omit<
   ImgHTMLAttributes<HTMLImageElement>,
   'src'
 > & {
-  path: string;
+  path: string | undefined;
 };
 
 const cache = new Map<string, string>();
 
-const FirebaseImage = ({ path, alt = '', style, ...props }: FirebaseImageProps) => {
+const FirebaseImage = ({
+  path,
+  alt = '',
+  style,
+  ...props
+}: FirebaseImageProps) => {
   const [src, setSrc] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    if (!cache.has(path)) {
-      setSrc(undefined);
-      getStorageUrl(path).then((url) => {
-        cache.set(path, url);
-        setSrc(url);
-      });
+    if (path !== undefined) {
+      if (!cache.has(path)) {
+        setSrc(undefined);
+        getStorageUrl(path).then((url) => {
+          cache.set(path, url);
+          setSrc(url);
+        });
+      } else {
+        setSrc(cache.get(path)!);
+      }
     } else {
-      setSrc(cache.get(path)!);
+      setSrc(undefined);
     }
   }, [path]);
 
-  return <img src={src} alt={alt} style={{
-    opacity: src === undefined ? 0 : 1,
-  }} {...props} />;
+  return (
+    <img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      style={{
+        opacity: src === undefined ? 0 : 1,
+      }}
+      {...props}
+    />
+  );
 };
 
 export default FirebaseImage;
