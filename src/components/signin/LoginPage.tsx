@@ -6,6 +6,7 @@ import Loading from '@/components/general/Loading.tsx';
 import {useNavigate, useSearch} from '@tanstack/react-router';
 import {createUser, login} from '@/logic/auth.ts';
 import {addUserToPod} from "@/logic/store/pods.ts";
+import {useQueryClient} from "@tanstack/react-query";
 
 type Inputs = {
   email: string;
@@ -27,6 +28,8 @@ const LoginPage = () => {
     from: '/login',
   });
 
+  const queryClient = useQueryClient();
+
   const onSubmit: SubmitHandler<Inputs> = useCallback(
     async ({email, password}) => {
       setLoading(true);
@@ -44,7 +47,7 @@ const LoginPage = () => {
           console.log('pod joined');
           await navigate({
             to: "/pods/$podId", params: {
-              podId: searchParams.join
+              podId: searchParams.join,
             }
           });
         } else {
@@ -62,7 +65,7 @@ const LoginPage = () => {
 
       setLoading(false);
     },
-    [navigate, createAccountMode, searchParams],
+    [navigate, createAccountMode, searchParams, queryClient],
   );
 
   return (

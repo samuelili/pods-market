@@ -1,16 +1,17 @@
 import { createQueryKeyStore } from '@lukemorales/query-key-factory';
 import { getUser } from '@/logic/store/users.ts';
 import { getPod, getPods } from '@/logic/store/pods.ts';
-import { firstCheckPromise } from '@/logic/auth.ts';
+import { firstCheckPromise, userId as globalUserId } from '@/logic/auth.ts';
 import { getAllListings, getListing, getPodListings } from './store/listings';
-import {getAllRequests} from "@/logic/store/requests.ts";
+import { getAllRequests } from '@/logic/store/requests.ts';
 
 const queries = createQueryKeyStore({
   users: {
     current: {
       queryKey: null,
       async queryFn() {
-        const userId = await firstCheckPromise;
+        const promiseUserId = await firstCheckPromise;
+        const userId = globalUserId || promiseUserId;
         if (!userId) return null;
 
         return await getUser(userId);
@@ -20,8 +21,8 @@ const queries = createQueryKeyStore({
       queryKey: [userId],
       queryFn() {
         return getUser(userId);
-      }
-    })
+      },
+    }),
   },
   pods: {
     pod: (podId: string) => ({
@@ -42,29 +43,29 @@ const queries = createQueryKeyStore({
       queryKey: [listingId],
       queryFn() {
         return getListing(listingId);
-      }
+      },
     }),
     pod: (podId: string) => ({
       queryKey: [podId],
       queryFn() {
         return getPodListings(podId);
-      }
+      },
     }),
     all: {
       queryKey: null,
       queryFn() {
         return getAllListings();
       },
-    }
+    },
   },
   requests: {
     all: {
       queryKey: null,
       queryFn() {
         return getAllRequests();
-      }
-    }
-  }
+      },
+    },
+  },
 });
 
 export default queries;

@@ -8,7 +8,6 @@ const AuthenticatedLayout = () => {
     strict: false,
   });
   const matches = useMatches();
-  console.log(matches);
   const isShopping =
     matches.find((match) => match.id.includes('/_authenticated/_shopping')) !==
     undefined;

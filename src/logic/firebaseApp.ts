@@ -1,7 +1,5 @@
 import {FirebaseApp, initializeApp} from 'firebase/app';
 
-console.log(import.meta.env.FIREBASE_API_KEY);
-
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "pods-market-9aee6.firebaseapp.com",

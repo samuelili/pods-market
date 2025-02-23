@@ -1,0 +1,29 @@
+.Options {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 0.375rem;
+
+    --anchor-gap: 0.125rem;
+}
+
+.Option {
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    user-select: none;
+
+    transition: background-color 160ms;
+
+    &:hover:not([data-selected=true]) {
+        background: rgba(0, 0, 0, 0.2);
+        box-shadow: 0 0 0.75rem -0.25rem rgba(200, 200, 200, 0.2);
+    }
+
+    &[data-selected] {
+        cursor: auto;
+        background: rgba(0, 0, 0, 0.4);
+        box-shadow: 0 0 0.75rem -0.25rem rgba(200, 200, 200, 0.6);
+    }
+
+    &:hover, &:focus {
+        background: rgba(0, 0, 0, 0.1);
+    }
+}

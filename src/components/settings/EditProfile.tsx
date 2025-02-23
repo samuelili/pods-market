@@ -8,8 +8,9 @@ import Loading from '@/components/general/Loading.tsx';
 import { uploadUserAvatarImage } from '@/logic/storage.ts';
 import { updateUser } from '@/logic/store/users.ts';
 import { User } from '@/types/User.ts';
-import {useQueryClient} from "@tanstack/react-query";
-import queries from "@/logic/queries.ts";
+import { useQueryClient } from '@tanstack/react-query';
+import queries from '@/logic/queries.ts';
+import Select from '@/components/general/Select.tsx';
 
 type Inputs = {
   avatar?: File;
@@ -31,25 +32,28 @@ const EditProfile = ({ handleClose }: EditProfileProps) => {
 
   const [currentUser] = useCurrentUser();
   const [loading, setLoading] = useState(false);
-  const editProfile = useCallback(async (data: Inputs) => {
-    setLoading(true);
+  const editProfile = useCallback(
+    async (data: Inputs) => {
+      setLoading(true);
 
-    const update: Partial<User> = {
-      name: data.name,
-    };
+      const update: Partial<User> = {
+        name: data.name,
+      };
 
-    if (data.avatar) {
-      const result = await uploadUserAvatarImage(data.avatar);
-      update.avatar = result.ref.fullPath;
-    }
+      if (data.avatar) {
+        const result = await uploadUserAvatarImage(data.avatar);
+        update.avatar = result.ref.fullPath;
+      }
 
-    await updateUser(currentUser.uid, update);
-    await queryClient.invalidateQueries(queries.users.current);
+      await updateUser(currentUser.uid, update);
+      await queryClient.invalidateQueries(queries.users.current);
 
-    setLoading(false);
+      setLoading(false);
 
-    handleClose && handleClose();
-  }, [currentUser, handleClose]);
+      handleClose && handleClose();
+    },
+    [currentUser, handleClose],
+  );
 
   return (
     <form className={'contents'} onSubmit={handleSubmit(editProfile)}>
@@ -83,6 +87,33 @@ const EditProfile = ({ handleClose }: EditProfileProps) => {
       />
 
       <h3 className={'mt-layout text-lg'}>Contact Information</h3>
+      <Select
+        options={[
+          {
+            label: 'Discord',
+            value: 'discord',
+          },
+          {
+            label: 'Instagram',
+            value: 'instagram',
+          },
+          {
+            label: 'Facebook',
+            value: 'facebook',
+          },
+          {
+            label: 'Phone Number',
+            value: 'phone',
+          },
+          {
+            label: 'Email',
+            value: 'email',
+          },
+        ]}
+        value={undefined}
+        onChange={() => {}}
+      />
+
       <div className="mt-layout flex items-center justify-end gap-2">
         <Button type={'button'} onClick={handleClose}>
           <IconX />

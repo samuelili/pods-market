@@ -22,7 +22,7 @@ export const firstCheckPromise = new Promise<string | null>((resolve) => {
       console.log('got auth user:', incomingUser);
 
       const user = await getUser(incomingUser.uid);
-      getQueryClient().setQueryData(queries.users.current.queryKey, user);
+      setCurrentUser(user);
 
       userId = incomingUser.uid;
       resolve(incomingUser.uid);
@@ -37,7 +37,8 @@ export function getCurrentUser() {
   ) as User | null;
 }
 
-export function setCurrentUser(user: User | undefined) {
+export function setCurrentUser(user: User | null | undefined) {
+  console.log('setCurrentUser', user);
   return queryClient.setQueryData(queries.users.current.queryKey, user);
 }
 
