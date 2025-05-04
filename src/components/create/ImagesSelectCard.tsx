@@ -9,19 +9,23 @@ import {
 } from '@tabler/icons-react';
 import Card, { CardProps } from '@/components/card/Card.tsx';
 import { ChangeEvent, DragEvent, useCallback, useState } from 'react';
+import FirebaseImage from '@/components/general/FirebaseImage.tsx';
 
 export type FileSelectCardProps = CardProps & {
-  files: File[] | undefined;
-  onFilesChange: (files: File[]) => void;
+  files: (string | File)[] | undefined;
+  onFilesChange: (files: (string | File)[]) => void;
 };
 
-const ImagesSelectCard = ({ files = [], onFilesChange }: FileSelectCardProps) => {
+const ImagesSelectCard = ({
+  files = [],
+  onFilesChange,
+}: FileSelectCardProps) => {
   const [dragging, setDragging] = useState(false);
 
   const handleDropFile = useCallback(
     (e: DragEvent<HTMLDivElement>) => {
       e.preventDefault();
-      const newFiles: File[] = [];
+      const newFiles: (string | File)[] = [];
       if (e.dataTransfer.items) {
         // Use DataTransferItemList interface to access the file(s)
         [...e.dataTransfer.items].forEach((item, i) => {
@@ -48,22 +52,31 @@ const ImagesSelectCard = ({ files = [], onFilesChange }: FileSelectCardProps) =>
     [files, onFilesChange],
   );
 
-  const handleFileSelect = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    if (e.currentTarget.files)
-      onFilesChange([...files, ...e.currentTarget.files]);
-  }, [files, onFilesChange]);
+  const handleFileSelect = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      if (e.currentTarget.files)
+        onFilesChange([...files, ...e.currentTarget.files]);
+    },
+    [files, onFilesChange],
+  );
 
-  const removeFile = useCallback((i: number) => {
-    const newFiles = [...files];
-    newFiles.splice(i, 1);
-    onFilesChange(newFiles);
-  }, [files, onFilesChange]);
+  const removeFile = useCallback(
+    (i: number) => {
+      const newFiles = [...files];
+      newFiles.splice(i, 1);
+      onFilesChange(newFiles);
+    },
+    [files, onFilesChange],
+  );
 
-  const swapFile = useCallback((i: number, j: number) => {
-    const newFiles = [...files];
-    [newFiles[i], newFiles[j]] = [newFiles[j], newFiles[i]];
-    onFilesChange(newFiles);
-  }, [files, onFilesChange]);
+  const swapFile = useCallback(
+    (i: number, j: number) => {
+      const newFiles = [...files];
+      [newFiles[i], newFiles[j]] = [newFiles[j], newFiles[i]];
+      onFilesChange(newFiles);
+    },
+    [files, onFilesChange],
+  );
 
   return (
     <Card
@@ -82,12 +95,21 @@ const ImagesSelectCard = ({ files = [], onFilesChange }: FileSelectCardProps) =>
     >
       {files.map((file, i) => (
         <div className={'group relative aspect-square'} key={i}>
-          <PreviewFile
-            file={file}
-            className={
-              'aspect-square h-full w-full rounded-md object-cover transition-opacity group-hover:opacity-50 sm:h-[8rem] sm:w-[8rem]'
-            }
-          />
+          {file instanceof File ? (
+            <PreviewFile
+              file={file}
+              className={
+                'aspect-square h-full w-full rounded-md object-cover transition-opacity group-hover:opacity-50 sm:h-[8rem] sm:w-[8rem]'
+              }
+            />
+          ) : (
+            <FirebaseImage
+              path={file}
+              className={
+                'aspect-square h-full w-full rounded-md object-cover transition-opacity group-hover:opacity-50 sm:h-[8rem] sm:w-[8rem]'
+              }
+            />
+          )}
           <div
             className={
               'absolute left-1 top-1 flex h-8 w-8 items-center justify-center rounded-md bg-ink-6'

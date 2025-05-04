@@ -1,5 +1,15 @@
 import { ensureAppInitialized } from '@/logic/firebaseApp.ts';
-import { addDoc, collection, doc, getDoc, getDocs, getFirestore, query, where } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  getFirestore,
+  query,
+  setDoc,
+  where,
+} from 'firebase/firestore';
 
 ensureAppInitialized();
 
@@ -8,59 +18,84 @@ const db = getFirestore();
 const listingsRef = collection(db, 'listings');
 
 export type Listing = {
-    uid: string;
-    title: string;
+  uid: string;
+  title: string;
 
-    userId: string;
-    podIds: string[];
+  userId: string;
+  podIds: string[];
 
-    location: string;
-    price: number;
-    description: string;
-    imageUrls: string[];
+  location: string;
+  price: number;
+  description: string;
+  imageUrls: string[];
 };
 
 export type NewListing = Omit<Listing, 'uid'>;
 
 export async function createListing(listing: NewListing) {
-    const docRef = await addDoc(listingsRef, listing);
-    const snap = await getDoc(docRef);
+  const docRef = await addDoc(listingsRef, listing);
+  const snap = await getDoc(docRef);
 
-    if (snap.exists())
-        return {
-            uid: snap.id,
-            ...snap.data(),
-        } as Listing;
-    return null;
+  if (snap.exists())
+    return {
+      uid: snap.id,
+      ...snap.data(),
+    } as Listing;
+  return null;
+}
+
+export async function updateListing(
+  listingId: string,
+  update: Partial<Listing>,
+): Promise<Listing | null> {
+  await setDoc(doc(listingsRef, listingId), update, { merge: true });
+  const docSnap = await getDoc(doc(listingsRef, listingId));
+
+  if (docSnap.exists())
+    return {
+      uid: docSnap.id,
+      ...docSnap.data(),
+    } as Listing;
+  return null;
 }
 
 export async function getListing(listingId: string) {
-    const snap = await getDoc(doc(listingsRef, listingId));
+  const snap = await getDoc(doc(listingsRef, listingId));
 
-    if (snap.exists())
-        return {
-            uid: snap.id,
-            ...snap.data(),
-        } as Listing;
-    return null;
+  if (snap.exists())
+    return {
+      uid: snap.id,
+      ...snap.data(),
+    } as Listing;
+  return null;
 }
 
 export async function getAllListings(): Promise<Listing[]> {
-    const q = query(listingsRef);
-    const snap = await getDocs(q);
+  const q = query(listingsRef);
+  const snap = await getDocs(q);
 
-    return snap.docs.filter((doc) => doc.exists()).map((doc) => ({
-        uid: doc.id,
-        ...doc.data(),
-    } as Listing));
+  return snap.docs
+    .filter((doc) => doc.exists())
+    .map(
+      (doc) =>
+        ({
+          uid: doc.id,
+          ...doc.data(),
+        }) as Listing,
+    );
 }
 
 export async function getPodListings(podId: string): Promise<Listing[]> {
-    const q = query(listingsRef, where("podIds", "array-contains", podId));
-    const snap = await getDocs(q);
+  const q = query(listingsRef, where('podIds', 'array-contains', podId));
+  const snap = await getDocs(q);
 
-    return snap.docs.filter((doc) => doc.exists()).map((doc) => ({
-        uid: doc.id,
-        ...doc.data(),
-    } as Listing));
+  return snap.docs
+    .filter((doc) => doc.exists())
+    .map(
+      (doc) =>
+        ({
+          uid: doc.id,
+          ...doc.data(),
+        }) as Listing,
+    );
 }

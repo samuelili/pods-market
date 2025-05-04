@@ -3,6 +3,7 @@ import {
   IconChevronLeft,
   IconChevronRight,
   IconMapPin,
+  IconPencil,
   IconUser,
   IconUsersGroup,
 } from '@tabler/icons-react';
@@ -17,20 +18,24 @@ import { User } from '@/types/User.ts';
 import { Pod } from '@/logic/store/pods.ts';
 import { useEffect, useState } from 'react';
 import Avatar from '@/components/general/Avatar.tsx';
+import useCurrentUser from '@/logic/hooks/useCurrentUser.ts';
 
 export type ListingDetailContentProps = {
   listing: Listing;
   seller: User;
   pod: Pod;
+  onEdit?: () => void;
 };
 
 const ListingDetailContent = ({
   listing,
   seller,
   pod,
+  onEdit,
 }: ListingDetailContentProps) => {
   const matches = useMatches();
   const backPath = matches[matches.length - 1].fullPath;
+  const [user] = useCurrentUser();
 
   const [imageIndex, setImageIndex] = useState(0);
 
@@ -41,17 +46,27 @@ const ListingDetailContent = ({
 
   return (
     <>
-      <LinkButton
-        to={backPath === '' ? '/' : backPath}
-        data-selected={false}
-        search={(prev) => ({
-          ...prev,
-          postId: '',
-        })}
-      >
-        <IconArrowLeft />
-        Back
-      </LinkButton>
+      <div className={'flex justify-between'}>
+        <LinkButton
+          to={backPath === '' ? '/' : backPath}
+          data-selected={false}
+          search={(prev) => ({
+            ...prev,
+            postId: '',
+          })}
+        >
+          <IconArrowLeft />
+          Back
+        </LinkButton>
+
+        {user.uid === listing.userId && (
+          <Button onClick={() => onEdit && onEdit()}>
+            <IconPencil />
+            Edit
+          </Button>
+        )}
+      </div>
+
       <div className={'relative mt-layout ' + styles.Image}>
         {imageIndex > 0 && (
           <Button

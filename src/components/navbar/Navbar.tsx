@@ -98,11 +98,6 @@ const Navbar = ({
                   'flex h-[3rem] w-[3rem] items-center justify-center rounded-full p-0 bg-transparent'
                 }
               >
-                {/*{pod.photoUrl ? (*/}
-                {/*  <FirebaseImage path={pod.photoUrl} className={"w-[3rem] h-[3rem] object-cover"} />*/}
-                {/*) : (*/}
-                {/*  getInitials(pod.name)*/}
-                {/*)}*/}
                 <Avatar size={12} name={pod.name} path={pod.photoUrl} />
               </LinkButton>
             </TooltipTrigger>
