@@ -32,7 +32,7 @@ const Avatar = ({
         <FirebaseImage
           className={'h-full w-full object-cover'}
           path={path}
-          resolution={size > 16 ? 128 : 64}
+          resolution={128}
         />
       ) : (
         name && getInitials(name)
