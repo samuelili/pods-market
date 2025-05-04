@@ -13,8 +13,8 @@ import {
 import LinkButton from '@/components/buttons/LinkButton.tsx';
 import { useQuery } from '@tanstack/react-query';
 import queries from '@/logic/queries.ts';
-import { getInitials } from '@/logic/misc.ts';
 import { useParams } from '@tanstack/react-router';
+import Avatar from '@/components/general/Avatar.tsx';
 
 const Navbar = ({
   className,
@@ -95,10 +95,15 @@ const Navbar = ({
                   podId: pod.uid,
                 }}
                 className={
-                  'flex h-[3rem] w-[3rem] items-center justify-center rounded-full bg-img'
+                  'flex h-[3rem] w-[3rem] items-center justify-center rounded-full p-0 bg-transparent'
                 }
               >
-                {getInitials(pod.name)}
+                {/*{pod.photoUrl ? (*/}
+                {/*  <FirebaseImage path={pod.photoUrl} className={"w-[3rem] h-[3rem] object-cover"} />*/}
+                {/*) : (*/}
+                {/*  getInitials(pod.name)*/}
+                {/*)}*/}
+                <Avatar size={12} name={pod.name} path={pod.photoUrl} />
               </LinkButton>
             </TooltipTrigger>
             <TooltipContent>{pod.name}</TooltipContent>

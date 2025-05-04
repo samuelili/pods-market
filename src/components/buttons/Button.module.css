@@ -8,6 +8,7 @@
     justify-content: center;
     align-items: center;
     background: rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
 
     transition: background-color 160ms, box-shadow 160ms;
     cursor: pointer;

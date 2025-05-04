@@ -17,7 +17,8 @@ import { Route as TestImport } from './routes/test'
 import { Route as LoginImport } from './routes/login'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as AuthenticatedShoppingPodsAllImport } from './routes/_authenticated/_shopping/pods/all'
-import { Route as AuthenticatedShoppingPodsPodIdImport } from './routes/_authenticated/_shopping/pods/$podId'
+import { Route as AuthenticatedShoppingPodsPodIdIndexImport } from './routes/_authenticated/_shopping/pods/$podId/index'
+import { Route as AuthenticatedShoppingPodsPodIdEditImport } from './routes/_authenticated/_shopping/pods/$podId/edit'
 
 // Create Virtual Routes
 
@@ -118,13 +119,24 @@ const AuthenticatedShoppingPodsAllRoute =
     ),
   )
 
-const AuthenticatedShoppingPodsPodIdRoute =
-  AuthenticatedShoppingPodsPodIdImport.update({
-    id: '/_shopping/pods/$podId',
-    path: '/pods/$podId',
+const AuthenticatedShoppingPodsPodIdIndexRoute =
+  AuthenticatedShoppingPodsPodIdIndexImport.update({
+    id: '/_shopping/pods/$podId/',
+    path: '/pods/$podId/',
     getParentRoute: () => AuthenticatedRoute,
   } as any).lazy(() =>
-    import('./routes/_authenticated/_shopping/pods/$podId.lazy').then(
+    import('./routes/_authenticated/_shopping/pods/$podId/index.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+
+const AuthenticatedShoppingPodsPodIdEditRoute =
+  AuthenticatedShoppingPodsPodIdEditImport.update({
+    id: '/_shopping/pods/$podId/edit',
+    path: '/pods/$podId/edit',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any).lazy(() =>
+    import('./routes/_authenticated/_shopping/pods/$podId/edit.lazy').then(
       (d) => d.Route,
     ),
   )
@@ -196,18 +208,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsIndexLazyImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/_shopping/pods/$podId': {
-      id: '/_authenticated/_shopping/pods/$podId'
-      path: '/pods/$podId'
-      fullPath: '/pods/$podId'
-      preLoaderRoute: typeof AuthenticatedShoppingPodsPodIdImport
-      parentRoute: typeof AuthenticatedImport
-    }
     '/_authenticated/_shopping/pods/all': {
       id: '/_authenticated/_shopping/pods/all'
       path: '/pods/all'
       fullPath: '/pods/all'
       preLoaderRoute: typeof AuthenticatedShoppingPodsAllImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/_shopping/pods/$podId/edit': {
+      id: '/_authenticated/_shopping/pods/$podId/edit'
+      path: '/pods/$podId/edit'
+      fullPath: '/pods/$podId/edit'
+      preLoaderRoute: typeof AuthenticatedShoppingPodsPodIdEditImport
+      parentRoute: typeof AuthenticatedImport
+    }
+    '/_authenticated/_shopping/pods/$podId/': {
+      id: '/_authenticated/_shopping/pods/$podId/'
+      path: '/pods/$podId'
+      fullPath: '/pods/$podId'
+      preLoaderRoute: typeof AuthenticatedShoppingPodsPodIdIndexImport
       parentRoute: typeof AuthenticatedImport
     }
   }
@@ -235,16 +254,20 @@ interface AuthenticatedRouteChildren {
   AuthenticatedCreateLazyRoute: typeof AuthenticatedCreateLazyRouteWithChildren
   AuthenticatedIndexLazyRoute: typeof AuthenticatedIndexLazyRoute
   AuthenticatedSettingsIndexLazyRoute: typeof AuthenticatedSettingsIndexLazyRoute
-  AuthenticatedShoppingPodsPodIdRoute: typeof AuthenticatedShoppingPodsPodIdRoute
   AuthenticatedShoppingPodsAllRoute: typeof AuthenticatedShoppingPodsAllRoute
+  AuthenticatedShoppingPodsPodIdEditRoute: typeof AuthenticatedShoppingPodsPodIdEditRoute
+  AuthenticatedShoppingPodsPodIdIndexRoute: typeof AuthenticatedShoppingPodsPodIdIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedCreateLazyRoute: AuthenticatedCreateLazyRouteWithChildren,
   AuthenticatedIndexLazyRoute: AuthenticatedIndexLazyRoute,
   AuthenticatedSettingsIndexLazyRoute: AuthenticatedSettingsIndexLazyRoute,
-  AuthenticatedShoppingPodsPodIdRoute: AuthenticatedShoppingPodsPodIdRoute,
   AuthenticatedShoppingPodsAllRoute: AuthenticatedShoppingPodsAllRoute,
+  AuthenticatedShoppingPodsPodIdEditRoute:
+    AuthenticatedShoppingPodsPodIdEditRoute,
+  AuthenticatedShoppingPodsPodIdIndexRoute:
+    AuthenticatedShoppingPodsPodIdIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -261,8 +284,9 @@ export interface FileRoutesByFullPath {
   '/create/listing': typeof AuthenticatedCreateListingLazyRoute
   '/create/pod': typeof AuthenticatedCreatePodLazyRoute
   '/settings': typeof AuthenticatedSettingsIndexLazyRoute
-  '/pods/$podId': typeof AuthenticatedShoppingPodsPodIdRoute
   '/pods/all': typeof AuthenticatedShoppingPodsAllRoute
+  '/pods/$podId/edit': typeof AuthenticatedShoppingPodsPodIdEditRoute
+  '/pods/$podId': typeof AuthenticatedShoppingPodsPodIdIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -274,8 +298,9 @@ export interface FileRoutesByTo {
   '/create/listing': typeof AuthenticatedCreateListingLazyRoute
   '/create/pod': typeof AuthenticatedCreatePodLazyRoute
   '/settings': typeof AuthenticatedSettingsIndexLazyRoute
-  '/pods/$podId': typeof AuthenticatedShoppingPodsPodIdRoute
   '/pods/all': typeof AuthenticatedShoppingPodsAllRoute
+  '/pods/$podId/edit': typeof AuthenticatedShoppingPodsPodIdEditRoute
+  '/pods/$podId': typeof AuthenticatedShoppingPodsPodIdIndexRoute
 }
 
 export interface FileRoutesById {
@@ -289,8 +314,9 @@ export interface FileRoutesById {
   '/_authenticated/create/listing': typeof AuthenticatedCreateListingLazyRoute
   '/_authenticated/create/pod': typeof AuthenticatedCreatePodLazyRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexLazyRoute
-  '/_authenticated/_shopping/pods/$podId': typeof AuthenticatedShoppingPodsPodIdRoute
   '/_authenticated/_shopping/pods/all': typeof AuthenticatedShoppingPodsAllRoute
+  '/_authenticated/_shopping/pods/$podId/edit': typeof AuthenticatedShoppingPodsPodIdEditRoute
+  '/_authenticated/_shopping/pods/$podId/': typeof AuthenticatedShoppingPodsPodIdIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -305,8 +331,9 @@ export interface FileRouteTypes {
     | '/create/listing'
     | '/create/pod'
     | '/settings'
-    | '/pods/$podId'
     | '/pods/all'
+    | '/pods/$podId/edit'
+    | '/pods/$podId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -317,8 +344,9 @@ export interface FileRouteTypes {
     | '/create/listing'
     | '/create/pod'
     | '/settings'
-    | '/pods/$podId'
     | '/pods/all'
+    | '/pods/$podId/edit'
+    | '/pods/$podId'
   id:
     | '__root__'
     | '/_authenticated'
@@ -330,8 +358,9 @@ export interface FileRouteTypes {
     | '/_authenticated/create/listing'
     | '/_authenticated/create/pod'
     | '/_authenticated/settings/'
-    | '/_authenticated/_shopping/pods/$podId'
     | '/_authenticated/_shopping/pods/all'
+    | '/_authenticated/_shopping/pods/$podId/edit'
+    | '/_authenticated/_shopping/pods/$podId/'
   fileRoutesById: FileRoutesById
 }
 
@@ -371,8 +400,9 @@ export const routeTree = rootRoute
         "/_authenticated/create",
         "/_authenticated/",
         "/_authenticated/settings/",
-        "/_authenticated/_shopping/pods/$podId",
-        "/_authenticated/_shopping/pods/all"
+        "/_authenticated/_shopping/pods/all",
+        "/_authenticated/_shopping/pods/$podId/edit",
+        "/_authenticated/_shopping/pods/$podId/"
       ]
     },
     "/login": {
@@ -408,12 +438,16 @@ export const routeTree = rootRoute
       "filePath": "_authenticated/settings/index.lazy.tsx",
       "parent": "/_authenticated"
     },
-    "/_authenticated/_shopping/pods/$podId": {
-      "filePath": "_authenticated/_shopping/pods/$podId.tsx",
-      "parent": "/_authenticated"
-    },
     "/_authenticated/_shopping/pods/all": {
       "filePath": "_authenticated/_shopping/pods/all.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/_shopping/pods/$podId/edit": {
+      "filePath": "_authenticated/_shopping/pods/$podId/edit.tsx",
+      "parent": "/_authenticated"
+    },
+    "/_authenticated/_shopping/pods/$podId/": {
+      "filePath": "_authenticated/_shopping/pods/$podId/index.tsx",
       "parent": "/_authenticated"
     }
   }

@@ -2,7 +2,9 @@ import { createFileRoute } from '@tanstack/react-router'
 import { additionalContentSchema } from '@/misc/validateAdditionalContentSearch.ts'
 import { getPod } from '@/logic/store/pods.ts'
 
-export const Route = createFileRoute('/_authenticated/_shopping/pods/$podId')({
+export const Route = createFileRoute(
+  '/_authenticated/_shopping/pods/$podId/edit',
+)({
   async loader({ params }) {
     return await getPod(params.podId)
   },

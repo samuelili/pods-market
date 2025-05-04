@@ -3,13 +3,14 @@ import ListingCard from '@/components/listing/ListingCard.tsx';
 import Card from '@/components/card/Card.tsx';
 import { IconCards, IconPencil, IconUsersGroup } from '@tabler/icons-react';
 import { getRouteApi } from '@tanstack/react-router';
-import Button from '@/components/buttons/Button.tsx';
 import InviteButton from '@/components/pod/InviteButton.tsx';
 import useCurrentUser from '@/logic/hooks/useCurrentUser.ts';
 import { useQuery } from '@tanstack/react-query';
 import queries from '@/logic/queries';
+import LinkButton from '@/components/buttons/LinkButton.tsx';
+import FirebaseImage from '@/components/general/FirebaseImage.tsx';
 
-const routeApi = getRouteApi('/_authenticated/_shopping/pods/$podId');
+const routeApi = getRouteApi('/_authenticated/_shopping/pods/$podId/');
 
 const PodPage = () => {
   const pod = routeApi.useLoaderData();
@@ -34,27 +35,34 @@ const PodPage = () => {
       <Card className={'p-4'}>
         <div className={'flex flex-wrap items-center gap-4'}>
           {pod.photoUrl && (
-            <div className={'h-[4rem] w-[4rem] rounded-full bg-img'} />
+            <FirebaseImage
+              className={'h-[4rem] w-[4rem] rounded-full bg-img'}
+              path={pod.photoUrl}
+            />
           )}
           <h1 className={'flex-1 text-4xl'}>{pod.name}</h1>
 
           <div className={'flex gap-2'}>
             <InviteButton />
             {isModerator && (
-              <Button className={'p-2'}>
+              <LinkButton
+                className={'p-2'}
+                to={'/pods/$podId/edit'}
+                params={{ podId: pod.uid }}
+              >
                 <IconPencil />
-              </Button>
+              </LinkButton>
             )}
           </div>
         </div>
         <div className={'mt-4 flex flex-wrap gap-4'}>
           <div className={'flex flex-wrap gap-2'}>
             <IconCards />
-            {listings?.length} Listing{listings?.length !== 1 && "s"}
+            {listings?.length} Listing{listings?.length !== 1 && 's'}
           </div>
           <div className={'flex flex-wrap gap-2'}>
             <IconUsersGroup />
-            {pod.users.length} Member{pod.users.length !== 1 && "s"}
+            {pod.users.length} Member{pod.users.length !== 1 && 's'}
           </div>
           {/*<Button className={'-m-2 bg-transparent p-2'}>*/}
           {/*  <IconBrandDiscord />*/}

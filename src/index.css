@@ -10,7 +10,6 @@
     color-scheme: dark dark;
     color: rgba(255, 255, 255, 0.87);
     /*background-color: #111;*/
-    background: linear-gradient(166deg, rgb(227,151,108) 0%, rgb(167,60,118) 30%, rgb(54,44,104) 90%, rgb(41,36,69) 100%);
     background-size: cover;
 
     font-synthesis: none;
@@ -35,6 +34,15 @@
 
 html {
     height: 100%;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+
+    background: linear-gradient(166deg, rgb(227, 151, 108) 0%, rgb(167, 60, 118) 30%, rgb(54, 44, 104) 90%, rgb(41, 36, 69) 100%);
 }
 
 h1, h2, h3, h4, h5, h6, .heading {
@@ -67,6 +75,11 @@ input, textarea {
         background: rgba(0, 0, 0, 0.3);
         box-shadow: 0 0 0.75rem -0.25rem rgba(200, 200, 200, 0.4);
         outline: none;
+    }
+
+    &:disabled {
+        background: rgba(0, 0, 0, 0.1);
+        box-shadow: none;
     }
 }
 

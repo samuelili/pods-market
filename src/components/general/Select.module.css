@@ -1,8 +1,14 @@
+.Button {
+    white-space: nowrap;
+}
+
 .Options {
     background: rgba(0, 0, 0, 0.3);
     border-radius: 0.375rem;
 
     --anchor-gap: 0.125rem;
+
+    backdrop-filter: blur(1rem);
 }
 
 .Option {

@@ -13,7 +13,7 @@ import { useState } from 'react';
 
 const InviteButton = () => {
   const params = useParams({
-    from: '/_authenticated/_shopping/pods/$podId',
+    from: '/_authenticated/_shopping/pods/$podId/',
   });
 
   const link = `${window.location.origin}/join/${params.podId}`;

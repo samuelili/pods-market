@@ -10,11 +10,11 @@ import { updateUser } from '@/logic/store/users.ts';
 import { User } from '@/types/User.ts';
 import { useQueryClient } from '@tanstack/react-query';
 import queries from '@/logic/queries.ts';
-import Select from '@/components/general/Select.tsx';
 
 type Inputs = {
   avatar?: File;
   name: string;
+  contacts: User['contacts'];
 };
 
 export type EditProfileProps = {
@@ -23,14 +23,19 @@ export type EditProfileProps = {
 
 const EditProfile = ({ handleClose }: EditProfileProps) => {
   const queryClient = useQueryClient();
+
+  const [currentUser] = useCurrentUser();
   const {
     register,
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<Inputs>();
-
-  const [currentUser] = useCurrentUser();
+  } = useForm<Inputs>({
+    defaultValues: {
+      name: currentUser.name,
+      contacts: currentUser.contacts,
+    },
+  });
   const [loading, setLoading] = useState(false);
   const editProfile = useCallback(
     async (data: Inputs) => {
@@ -80,39 +85,22 @@ const EditProfile = ({ handleClose }: EditProfileProps) => {
       <input
         className={'mt-2'}
         placeholder={"What's your name?"}
-        defaultValue={currentUser.name}
         {...register('name', {
           required: 'Please provide a name',
         })}
       />
 
-      <h3 className={'mt-layout text-lg'}>Contact Information</h3>
-      <Select
-        options={[
-          {
-            label: 'Discord',
-            value: 'discord',
-          },
-          {
-            label: 'Instagram',
-            value: 'instagram',
-          },
-          {
-            label: 'Facebook',
-            value: 'facebook',
-          },
-          {
-            label: 'Phone Number',
-            value: 'phone',
-          },
-          {
-            label: 'Email',
-            value: 'email',
-          },
-        ]}
-        value={undefined}
-        onChange={() => {}}
-      />
+      {/*<h3 className={'mt-layout text-lg'}>Contact Information</h3>*/}
+      {/*<Controller*/}
+      {/*  control={control}*/}
+      {/*  render={({ field: { onChange, value } }) => (*/}
+      {/*    <ContactInformationEdit*/}
+      {/*      value={value}*/}
+      {/*      onChange={onChange}*/}
+      {/*    />*/}
+      {/*  )}*/}
+      {/*  name={'contacts'}*/}
+      {/*/>*/}
 
       <div className="mt-layout flex items-center justify-end gap-2">
         <Button type={'button'} onClick={handleClose}>

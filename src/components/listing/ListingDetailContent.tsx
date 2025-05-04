@@ -3,7 +3,6 @@ import {
   IconChevronLeft,
   IconChevronRight,
   IconMapPin,
-  IconRuler2,
   IconUser,
   IconUsersGroup,
 } from '@tabler/icons-react';
@@ -18,7 +17,6 @@ import { User } from '@/types/User.ts';
 import { Pod } from '@/logic/store/pods.ts';
 import { useEffect, useState } from 'react';
 import Avatar from '@/components/general/Avatar.tsx';
-import ListingSendRequest from '@/components/listing/ListingSendRequest.tsx';
 
 export type ListingDetailContentProps = {
   listing: Listing;
@@ -113,13 +111,13 @@ const ListingDetailContent = ({
             <p className={'flex-1 leading-tight'}>{pod.name}</p>
           </div>
 
-          <div className={'mt-2 flex items-center gap-2'}>
-            <IconRuler2 />
-            <p className={'flex-1 leading-tight'}>12 mi.</p>
-          </div>
+          {/*<div className={'mt-2 flex items-center gap-2'}>*/}
+          {/*  <IconRuler2 />*/}
+          {/*  <p className={'flex-1 leading-tight'}>12 mi.</p>*/}
+          {/*</div>*/}
         </div>
         <p className={'mt-4 ' + styles.Description}>{listing.description}</p>
-        <ListingSendRequest listing={listing} />
+        {/*<ListingSendRequest listing={listing} />*/}
       </div>
     </>
   );
