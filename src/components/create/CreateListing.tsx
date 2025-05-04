@@ -8,7 +8,7 @@ import queries from '@/logic/queries';
 import Loading from '../general/Loading';
 import { createListing, NewListing } from '@/logic/store/listings';
 import useCurrentUser from '@/logic/hooks/useCurrentUser';
-import { useNavigate } from '@tanstack/react-router';
+import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import { uploadListingImages } from '@/logic/storage';
 
 type Inputs = {
@@ -22,7 +22,10 @@ type Inputs = {
   location: string;
 };
 
+const route = getRouteApi('/_authenticated/create/listing');
+
 const CreateListing = () => {
+  const { podId } = route.useSearch() ?? {};
   const { data: pods } = useQuery(queries.pods.all);
   const [selectedPods, setSelectedPods] = useState<Set<string>>(new Set());
 
@@ -45,8 +48,17 @@ const CreateListing = () => {
     // first, upload files
     const uploadResults = await uploadListingImages(data.images);
 
+    let podIds: string[];
+    if (podId) {
+      podIds = [podId];
+    } else if (data.allPods) {
+      podIds = pods.map((pod) => pod.uid);
+    } else {
+      podIds = [...selectedPods];
+    }
+
     const newListing: NewListing = {
-      podIds: data.allPods ? pods.map((pod) => pod.uid) : [...selectedPods],
+      podIds: podIds,
       imageUrls: uploadResults.map((result) => result.ref.fullPath),
       title: data.title,
       price: parseInt(data.price),
@@ -56,10 +68,24 @@ const CreateListing = () => {
     };
     const listing = await createListing(newListing);
 
-    await navigate({
-      to: '/pods/all',
-      search: { postId: listing?.uid },
-    });
+    if (!listing) {
+      alert('Something went wrong! Pls tell sam');
+      setLoading(false);
+      return;
+    }
+
+    if (podId) {
+      await navigate({
+        to: '/pods/$podId',
+        params: { podId: podId },
+        search: { postId: listing.uid },
+      });
+    } else {
+      await navigate({
+        to: '/pods/all',
+        search: { postId: listing.uid },
+      });
+    }
 
     setLoading(false);
   };
@@ -74,43 +100,43 @@ const CreateListing = () => {
     setSelectedPods(newPods);
   };
 
-  console.log(Object.values(errors)[0]);
-
   return (
     <form className={'contents'} onSubmit={handleSubmit(onSubmit)}>
+      {!podId && (
+        <Card className={'mt-layout p-layout'}>
+          <h2 className={'text-2xl'}>1. Select Pods</h2>
+          <p>Only these selected pods will be able to see your listing.</p>
+
+          <div className={'mt-2 flex flex-col gap-3'}>
+            <label className={'flex items-center'}>
+              <input
+                type={'checkbox'}
+                className={'mr-2'}
+                {...register('allPods')}
+              />
+              All Pods
+            </label>
+
+            {!watch('allPods') &&
+              pods !== undefined &&
+              pods.map((pod, i) => (
+                <label className={'flex items-center'} key={i}>
+                  <input
+                    type={'checkbox'}
+                    className={'mr-2'}
+                    checked={selectedPods.has(pod.uid)}
+                    onChange={() => handlePodToggle(pod.uid)}
+                  />
+                  <div className={'mr-2 h-8 w-8 rounded-full bg-img'} />
+                  {pod.name}
+                </label>
+              ))}
+          </div>
+        </Card>
+      )}
+
       <Card className={'mt-layout p-layout'}>
-        <h2 className={'text-2xl'}>1. Select Pods</h2>
-        <p>Only these selected pods will be able to see your listing.</p>
-
-        <div className={'mt-2 flex flex-col gap-3'}>
-          <label className={'flex items-center'}>
-            <input
-              type={'checkbox'}
-              className={'mr-2'}
-              {...register('allPods')}
-            />
-            All Pods
-          </label>
-
-          {!watch('allPods') &&
-            pods !== undefined &&
-            pods.map((pod, i) => (
-              <label className={'flex items-center'} key={i}>
-                <input
-                  type={'checkbox'}
-                  className={'mr-2'}
-                  checked={selectedPods.has(pod.uid)}
-                  onChange={() => handlePodToggle(pod.uid)}
-                />
-                <div className={'mr-2 h-8 w-8 rounded-full bg-img'} />
-                {pod.name}
-              </label>
-            ))}
-        </div>
-      </Card>
-
-      <Card className={'mt-layout p-layout'}>
-        <h2 className={'text-2xl'}>2. Listing Information</h2>
+        <h2 className={'text-2xl'}>{podId ? '1' : '2'}. Listing Information</h2>
         <p>Let people know what you're trying to sell!</p>
 
         <h3 className={'mt-4 text-lg'}>
@@ -201,7 +227,7 @@ const CreateListing = () => {
             'heading h-[4rem] w-full items-center justify-center text-2xl'
           }
         >
-          {loading ? <Loading /> : '3. Create'}
+          {loading ? <Loading /> : `${podId ? '2' : '3'}. Create`}
         </Button>
       </Card>
     </form>

@@ -1,7 +1,7 @@
 import styles from '@/components/Root.module.css';
 import ListingCard from '@/components/listing/ListingCard.tsx';
 import Card from '@/components/card/Card.tsx';
-import { IconCards, IconPencil, IconUsersGroup } from '@tabler/icons-react';
+import {IconCards, IconPencil, IconPlus, IconUsersGroup} from '@tabler/icons-react';
 import { getRouteApi } from '@tanstack/react-router';
 import InviteButton from '@/components/pod/InviteButton.tsx';
 import useCurrentUser from '@/logic/hooks/useCurrentUser.ts';
@@ -43,6 +43,15 @@ const PodPage = () => {
           <h1 className={'flex-1 text-4xl'}>{pod.name}</h1>
 
           <div className={'flex gap-2'}>
+            <LinkButton
+              className={'p-2'}
+              to={'/create/listing'}
+              search={{
+                podId: pod.uid,
+              }}
+            >
+              <IconPlus />
+            </LinkButton>
             <InviteButton />
             {isModerator && (
               <LinkButton

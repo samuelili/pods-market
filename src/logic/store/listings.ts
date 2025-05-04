@@ -2,6 +2,7 @@ import { ensureAppInitialized } from '@/logic/firebaseApp.ts';
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -68,6 +69,12 @@ export async function getListing(listingId: string) {
       ...snap.data(),
     } as Listing;
   return null;
+}
+
+export async function removeListing(listingId: string) {
+  const docRef = doc(listingsRef, listingId);
+
+  await deleteDoc(docRef);
 }
 
 export async function getAllListings(): Promise<Listing[]> {

@@ -1,5 +1,5 @@
 import Button from '@/components/buttons/Button.tsx';
-import { Listing, updateListing } from '@/logic/store/listings.ts';
+import {Listing, removeListing, updateListing} from '@/logic/store/listings.ts';
 import { User } from '@/types/User.ts';
 import { Pod } from '@/logic/store/pods.ts';
 import { useState } from 'react';
@@ -9,9 +9,17 @@ import { uploadListingImages } from '@/logic/storage.ts';
 import Card from '@/components/card/Card.tsx';
 import ImagesSelectCard from '@/components/create/ImagesSelectCard.tsx';
 import Loading from '@/components/general/Loading.tsx';
-import { IconArrowLeft } from '@tabler/icons-react';
-import { useQueryClient } from '@tanstack/react-query';
+import { IconArrowLeft, IconTrash, IconX } from '@tabler/icons-react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import queries from '@/logic/queries.ts';
+import {
+  CloseButton,
+  Popover,
+  PopoverButton,
+  PopoverPanel,
+} from '@headlessui/react';
+import { twMerge } from 'tailwind-merge';
+import { useNavigate } from '@tanstack/react-router';
 
 export type ListingDetailContentProps = {
   listing: Listing;
@@ -33,9 +41,10 @@ const ListingDetailContent = ({
   listing,
   onFinished,
 }: ListingDetailContentProps) => {
-  const [user] = useCurrentUser();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
+  const [user] = useCurrentUser();
   const {
     register,
     control,
@@ -90,12 +99,78 @@ const ListingDetailContent = ({
     onFinished && onFinished();
   };
 
+  const { mutate: deleteListing, isPending: deletePending } = useMutation({
+    mutationKey: ['delete', listing.uid],
+    async mutationFn() {
+      await removeListing(listing.uid);
+    },
+    async onSuccess() {
+      // invalidate data
+      for (const podId of listing.podIds) {
+        await queryClient.invalidateQueries({
+          queryKey: queries.listings.pod(podId).queryKey,
+        });
+      }
+
+      await navigate({
+        from: `/pods/$podId`,
+        to: '.',
+        search: (prev) => ({
+          ...prev,
+          postId: '',
+        }),
+      });
+    },
+  });
+
   return (
-    <form className={'p-layout'} onSubmit={handleSubmit(onSubmit)}>
-      <Button onClick={() => onFinished && onFinished()}>
-        <IconArrowLeft />
-        Back
-      </Button>
+    <form className={'contents'} onSubmit={handleSubmit(onSubmit)}>
+      <div className={'flex justify-between'}>
+        <Button onClick={() => onFinished && onFinished()}>
+          <IconArrowLeft />
+          Back
+        </Button>
+
+        {/*TODO: cleanup*/}
+
+        <Popover>
+          <PopoverButton as={Button}>
+            <IconTrash />
+            Delete
+          </PopoverButton>
+          <PopoverPanel
+            as={Card}
+            anchor="bottom end"
+            transition
+            className={twMerge(
+              'bg-img p-2 transition duration-200 [--anchor-gap:0.25rem]',
+              'data-[closed]:-translate-y-2 data-[closed]:scale-95 data-[closed]:opacity-0',
+            )}
+          >
+            <p className={'ml-1'}>Are you sure?</p>
+            <div className={'mt-2 flex gap-2'}>
+              <CloseButton as={Button}>
+                <IconX />
+                No
+              </CloseButton>
+              <Button
+                onClick={() => {
+                  deleteListing();
+                }}
+              >
+                {deletePending ? (
+                  <Loading />
+                ) : (
+                  <>
+                    <IconTrash />
+                    Yes, Delete
+                  </>
+                )}
+              </Button>
+            </div>
+          </PopoverPanel>
+        </Popover>
+      </div>
 
       <h3 className={'mt-4 text-lg'}>
         Upload Images{' '}

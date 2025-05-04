@@ -36,7 +36,7 @@ const InviteButton = () => {
         transition
         className={twMerge(
           'p-1 transition duration-200 [--anchor-gap:0.25rem]',
-          'data-[closed]:-translate-y-2 data-[closed]:scale-95 data-[closed]:opacity-0',
+          'bg-img data-[closed]:-translate-y-2 data-[closed]:scale-95 data-[closed]:opacity-0',
         )}
       >
         <p className={'mt-1 pl-2.5'}>
@@ -49,7 +49,7 @@ const InviteButton = () => {
               <IconCopy />
             </Button>
           </TooltipTrigger>
-          <TooltipContent className={"px-2 bg-img"}>Copied!</TooltipContent>
+          <TooltipContent className={'bg-img px-2'}>Copied!</TooltipContent>
         </Tooltip>
       </PopoverPanel>
     </Popover>

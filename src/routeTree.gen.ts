@@ -16,6 +16,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as TestImport } from './routes/test'
 import { Route as LoginImport } from './routes/login'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
+import { Route as AuthenticatedCreateListingImport } from './routes/_authenticated/create/listing'
 import { Route as AuthenticatedShoppingPodsAllImport } from './routes/_authenticated/_shopping/pods/all'
 import { Route as AuthenticatedShoppingPodsPodIdIndexImport } from './routes/_authenticated/_shopping/pods/$podId/index'
 import { Route as AuthenticatedShoppingPodsPodIdEditImport } from './routes/_authenticated/_shopping/pods/$podId/edit'
@@ -32,9 +33,6 @@ const AuthenticatedSettingsIndexLazyImport = createFileRoute(
 )()
 const AuthenticatedCreatePodLazyImport = createFileRoute(
   '/_authenticated/create/pod',
-)()
-const AuthenticatedCreateListingLazyImport = createFileRoute(
-  '/_authenticated/create/listing',
 )()
 
 // Create/Update Routes
@@ -99,14 +97,15 @@ const AuthenticatedCreatePodLazyRoute = AuthenticatedCreatePodLazyImport.update(
   import('./routes/_authenticated/create/pod.lazy').then((d) => d.Route),
 )
 
-const AuthenticatedCreateListingLazyRoute =
-  AuthenticatedCreateListingLazyImport.update({
+const AuthenticatedCreateListingRoute = AuthenticatedCreateListingImport.update(
+  {
     id: '/listing',
     path: '/listing',
     getParentRoute: () => AuthenticatedCreateLazyRoute,
-  } as any).lazy(() =>
-    import('./routes/_authenticated/create/listing.lazy').then((d) => d.Route),
-  )
+  } as any,
+).lazy(() =>
+  import('./routes/_authenticated/create/listing.lazy').then((d) => d.Route),
+)
 
 const AuthenticatedShoppingPodsAllRoute =
   AuthenticatedShoppingPodsAllImport.update({
@@ -191,7 +190,7 @@ declare module '@tanstack/react-router' {
       id: '/_authenticated/create/listing'
       path: '/listing'
       fullPath: '/create/listing'
-      preLoaderRoute: typeof AuthenticatedCreateListingLazyImport
+      preLoaderRoute: typeof AuthenticatedCreateListingImport
       parentRoute: typeof AuthenticatedCreateLazyImport
     }
     '/_authenticated/create/pod': {
@@ -235,13 +234,13 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface AuthenticatedCreateLazyRouteChildren {
-  AuthenticatedCreateListingLazyRoute: typeof AuthenticatedCreateListingLazyRoute
+  AuthenticatedCreateListingRoute: typeof AuthenticatedCreateListingRoute
   AuthenticatedCreatePodLazyRoute: typeof AuthenticatedCreatePodLazyRoute
 }
 
 const AuthenticatedCreateLazyRouteChildren: AuthenticatedCreateLazyRouteChildren =
   {
-    AuthenticatedCreateListingLazyRoute: AuthenticatedCreateListingLazyRoute,
+    AuthenticatedCreateListingRoute: AuthenticatedCreateListingRoute,
     AuthenticatedCreatePodLazyRoute: AuthenticatedCreatePodLazyRoute,
   }
 
@@ -281,7 +280,7 @@ export interface FileRoutesByFullPath {
   '/create': typeof AuthenticatedCreateLazyRouteWithChildren
   '/join/$podId': typeof JoinPodIdLazyRoute
   '/': typeof AuthenticatedIndexLazyRoute
-  '/create/listing': typeof AuthenticatedCreateListingLazyRoute
+  '/create/listing': typeof AuthenticatedCreateListingRoute
   '/create/pod': typeof AuthenticatedCreatePodLazyRoute
   '/settings': typeof AuthenticatedSettingsIndexLazyRoute
   '/pods/all': typeof AuthenticatedShoppingPodsAllRoute
@@ -295,7 +294,7 @@ export interface FileRoutesByTo {
   '/create': typeof AuthenticatedCreateLazyRouteWithChildren
   '/join/$podId': typeof JoinPodIdLazyRoute
   '/': typeof AuthenticatedIndexLazyRoute
-  '/create/listing': typeof AuthenticatedCreateListingLazyRoute
+  '/create/listing': typeof AuthenticatedCreateListingRoute
   '/create/pod': typeof AuthenticatedCreatePodLazyRoute
   '/settings': typeof AuthenticatedSettingsIndexLazyRoute
   '/pods/all': typeof AuthenticatedShoppingPodsAllRoute
@@ -311,7 +310,7 @@ export interface FileRoutesById {
   '/_authenticated/create': typeof AuthenticatedCreateLazyRouteWithChildren
   '/join/$podId': typeof JoinPodIdLazyRoute
   '/_authenticated/': typeof AuthenticatedIndexLazyRoute
-  '/_authenticated/create/listing': typeof AuthenticatedCreateListingLazyRoute
+  '/_authenticated/create/listing': typeof AuthenticatedCreateListingRoute
   '/_authenticated/create/pod': typeof AuthenticatedCreatePodLazyRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexLazyRoute
   '/_authenticated/_shopping/pods/all': typeof AuthenticatedShoppingPodsAllRoute
@@ -427,7 +426,7 @@ export const routeTree = rootRoute
       "parent": "/_authenticated"
     },
     "/_authenticated/create/listing": {
-      "filePath": "_authenticated/create/listing.lazy.tsx",
+      "filePath": "_authenticated/create/listing.tsx",
       "parent": "/_authenticated/create"
     },
     "/_authenticated/create/pod": {
