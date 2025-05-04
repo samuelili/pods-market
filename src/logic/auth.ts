@@ -16,6 +16,7 @@ const auth = getAuth();
 const queryClient = getQueryClient();
 
 export let userId = '';
+export const NAME_UNSET = "ASDFASDFASDF_UNSET"; // make sure no one accidentally sets this name lol
 export const firstCheckPromise = new Promise<string | null>((resolve) => {
   auth.onAuthStateChanged(async (incomingUser) => {
     if (incomingUser) {
@@ -59,7 +60,7 @@ export async function createUser(email: string, password: string) {
     const newUser = await addUser({
       avatar: userCredential.user.photoURL,
       contacts: {},
-      name: userCredential.user.displayName ?? 'Anonymous',
+      name: userCredential.user.displayName ?? NAME_UNSET,
       pods: [],
       uid: userCredential.user.uid,
     });

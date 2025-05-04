@@ -14,6 +14,7 @@ import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as TestImport } from './routes/test'
+import { Route as OnboardingImport } from './routes/onboarding'
 import { Route as LoginImport } from './routes/login'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as AuthenticatedCreateListingImport } from './routes/_authenticated/create/listing'
@@ -42,6 +43,12 @@ const TestRoute = TestImport.update({
   path: '/test',
   getParentRoute: () => rootRoute,
 } as any)
+
+const OnboardingRoute = OnboardingImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRoute,
+} as any).lazy(() => import('./routes/onboarding.lazy').then((d) => d.Route))
 
 const LoginRoute = LoginImport.update({
   id: '/login',
@@ -156,6 +163,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginImport
+      parentRoute: typeof rootRoute
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingImport
       parentRoute: typeof rootRoute
     }
     '/test': {
@@ -276,6 +290,7 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 export interface FileRoutesByFullPath {
   '': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
+  '/onboarding': typeof OnboardingRoute
   '/test': typeof TestRoute
   '/create': typeof AuthenticatedCreateLazyRouteWithChildren
   '/join/$podId': typeof JoinPodIdLazyRoute
@@ -290,6 +305,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
+  '/onboarding': typeof OnboardingRoute
   '/test': typeof TestRoute
   '/create': typeof AuthenticatedCreateLazyRouteWithChildren
   '/join/$podId': typeof JoinPodIdLazyRoute
@@ -306,6 +322,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/login': typeof LoginRoute
+  '/onboarding': typeof OnboardingRoute
   '/test': typeof TestRoute
   '/_authenticated/create': typeof AuthenticatedCreateLazyRouteWithChildren
   '/join/$podId': typeof JoinPodIdLazyRoute
@@ -323,6 +340,7 @@ export interface FileRouteTypes {
   fullPaths:
     | ''
     | '/login'
+    | '/onboarding'
     | '/test'
     | '/create'
     | '/join/$podId'
@@ -336,6 +354,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
+    | '/onboarding'
     | '/test'
     | '/create'
     | '/join/$podId'
@@ -350,6 +369,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_authenticated'
     | '/login'
+    | '/onboarding'
     | '/test'
     | '/_authenticated/create'
     | '/join/$podId'
@@ -366,6 +386,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   LoginRoute: typeof LoginRoute
+  OnboardingRoute: typeof OnboardingRoute
   TestRoute: typeof TestRoute
   JoinPodIdLazyRoute: typeof JoinPodIdLazyRoute
 }
@@ -373,6 +394,7 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   LoginRoute: LoginRoute,
+  OnboardingRoute: OnboardingRoute,
   TestRoute: TestRoute,
   JoinPodIdLazyRoute: JoinPodIdLazyRoute,
 }
@@ -389,6 +411,7 @@ export const routeTree = rootRoute
       "children": [
         "/_authenticated",
         "/login",
+        "/onboarding",
         "/test",
         "/join/$podId"
       ]
@@ -406,6 +429,9 @@ export const routeTree = rootRoute
     },
     "/login": {
       "filePath": "login.ts"
+    },
+    "/onboarding": {
+      "filePath": "onboarding.tsx"
     },
     "/test": {
       "filePath": "test.tsx"

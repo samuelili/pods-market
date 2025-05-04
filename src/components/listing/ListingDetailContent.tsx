@@ -84,6 +84,7 @@ const ListingDetailContent = ({
         <FirebaseImage
           className={'h-full w-full rounded-md object-contain'}
           path={listing.imageUrls[imageIndex]}
+          resolution={1920}
         />
 
         {imageIndex < listing.imageUrls.length - 1 && (

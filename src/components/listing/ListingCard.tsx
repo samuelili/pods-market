@@ -31,6 +31,7 @@ const ListingCard = ({ listing, ...props }: ListingCardProps) => {
             <FirebaseImage
               className="object-contain"
               path={listing.imageUrls[0]}
+              resolution={640}
             />
           )}
         </div>

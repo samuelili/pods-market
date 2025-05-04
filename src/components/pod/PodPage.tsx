@@ -1,7 +1,12 @@
 import styles from '@/components/Root.module.css';
 import ListingCard from '@/components/listing/ListingCard.tsx';
 import Card from '@/components/card/Card.tsx';
-import {IconCards, IconPencil, IconPlus, IconUsersGroup} from '@tabler/icons-react';
+import {
+  IconCards,
+  IconPencil,
+  IconPlus,
+  IconUsersGroup,
+} from '@tabler/icons-react';
 import { getRouteApi } from '@tanstack/react-router';
 import InviteButton from '@/components/pod/InviteButton.tsx';
 import useCurrentUser from '@/logic/hooks/useCurrentUser.ts';
@@ -35,10 +40,17 @@ const PodPage = () => {
       <Card className={'p-4'}>
         <div className={'flex flex-wrap items-center gap-4'}>
           {pod.photoUrl && (
-            <FirebaseImage
-              className={'h-[4rem] w-[4rem] rounded-full bg-img'}
-              path={pod.photoUrl}
-            />
+            <div
+              className={
+                'h-[4rem] w-[4rem] overflow-hidden rounded-full bg-img'
+              }
+            >
+              <FirebaseImage
+                className={'h-full w-full'}
+                path={pod.photoUrl}
+                resolution={128}
+              />
+            </div>
           )}
           <h1 className={'flex-1 text-4xl'}>{pod.name}</h1>
 
