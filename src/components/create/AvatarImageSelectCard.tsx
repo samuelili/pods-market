@@ -71,7 +71,7 @@ const AvatarImageSelectCard = ({
         {file ? (
           <PreviewFile file={file} className={'h-full w-full object-cover'} />
         ) : currentAvatar ? (
-          <FirebaseImage path={currentAvatar} className={'h-full w-full object-cover'}/>
+          <FirebaseImage path={currentAvatar} className={'h-full w-full object-cover'} resolution={128}/>
         ) : (
           <IconPhotoOff/>
         )}

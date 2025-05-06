@@ -57,6 +57,7 @@ const OnboardingPage = () => {
         <p>Before we get started, we need a bit more information from you.</p>
       </Card>
 
+      {/*@ts-ignore*/}
       <form className={'contents'} onSubmit={handleSubmit(editProfile)}>
         <Card className={'mt-layout p-layout'}>
           <h3 className={'text-lg'}>

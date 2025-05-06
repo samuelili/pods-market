@@ -1,27 +1,35 @@
 import Card from '@/components/card/Card.tsx';
-import {SubmitHandler, useForm} from 'react-hook-form';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import Button from '@/components/buttons/Button.tsx';
-import {useCallback, useState} from 'react';
+import { useCallback, useState } from 'react';
 import Loading from '@/components/general/Loading.tsx';
-import {useNavigate, useSearch} from '@tanstack/react-router';
-import {createUser, login} from '@/logic/auth.ts';
-import {addUserToPod} from "@/logic/store/pods.ts";
-import {useQueryClient} from "@tanstack/react-query";
+import { useNavigate, useSearch } from '@tanstack/react-router';
+import {
+  createUserWithEmailPassword,
+  loginWithEmailAndPassword,
+  loginWithGoogle,
+} from '@/logic/auth.ts';
+import { addUserToPod } from '@/logic/store/pods.ts';
+import { useQueryClient } from '@tanstack/react-query';
+import { IconBrandGoogleFilled } from '@tabler/icons-react';
+import { User } from '@/types/User.ts';
 
 type Inputs = {
   email: string;
   password: string;
 };
 
+export type LoginTypes = 'email-password' | 'google';
+
 const LoginPage = () => {
   const {
     register,
     handleSubmit,
-    formState: {errors},
+    formState: { errors },
   } = useForm<Inputs>();
 
-  const [createAccountMode, setCreateAccountMode] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [createAccountMode, setcreateAccountMode] = useState(false);
+  const [loading, setLoading] = useState<LoginTypes | null>(null);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const searchParams = useSearch({
@@ -30,15 +38,43 @@ const LoginPage = () => {
 
   const queryClient = useQueryClient();
 
-  const onSubmit: SubmitHandler<Inputs> = useCallback(
-    async ({email, password}) => {
-      setLoading(true);
+  const login = useCallback(
+    async (
+      params:
+        | {
+            type: 'email-password';
+            email: string;
+            password: string;
+          }
+        | {
+            type: 'google';
+          },
+    ) => {
+      setLoading(params.type);
       setError(null);
 
       try {
-        const user = await (createAccountMode
-          ? createUser(email, password)
-          : login(email, password));
+        let user: User | null | undefined;
+        if (params.type === 'google') {
+          user = await loginWithGoogle();
+        } else {
+          if (createAccountMode) {
+            user = await createUserWithEmailPassword(
+              params.email,
+              params.password,
+            );
+          } else {
+            user = await loginWithEmailAndPassword(
+              params.email,
+              params.password,
+            );
+          }
+        }
+
+        if (!user) {
+          // noinspection ExceptionCaughtLocallyJS
+          throw new Error('Unable to create User. Contact Sam.');
+        }
 
         if (searchParams?.join) {
           // if from a join
@@ -46,13 +82,14 @@ const LoginPage = () => {
           await addUserToPod(searchParams.join, user!.uid);
           console.log('pod joined');
           await navigate({
-            to: "/pods/$podId", params: {
+            to: '/pods/$podId',
+            params: {
               podId: searchParams.join,
-            }
+            },
           });
         } else {
           // just redirect normally
-          await navigate({to: searchParams?.redirect ?? '/'});
+          await navigate({ to: searchParams?.redirect ?? '/' });
         }
       } catch (e) {
         if (e instanceof Error) {
@@ -63,10 +100,18 @@ const LoginPage = () => {
         console.error(e);
       }
 
-      setLoading(false);
+      setLoading(null);
     },
     [navigate, createAccountMode, searchParams, queryClient],
   );
+
+  const onSubmit: SubmitHandler<Inputs> = useCallback(({ email, password }) => {
+    return login({
+      type: 'email-password',
+      email,
+      password,
+    });
+  }, []);
 
   return (
     <div className={'mx-auto mt-16 max-w-lg p-layout'}>
@@ -119,14 +164,37 @@ const LoginPage = () => {
         <Card className={'mt-layout flex flex-col items-center gap-2'}>
           {!createAccountMode ? (
             <>
-              <Button className={'heading w-full'} large={true} type={'submit'}>
-                {loading ? <Loading/> : 'Log in'}
+              <Button
+                className={'heading w-full'}
+                large={true}
+                type={'submit'}
+                disabled={Boolean(loading && loading !== 'email-password')}
+              >
+                {loading === 'email-password' ? <Loading /> : 'Log in'}
+              </Button>
+              <Button
+                className={'heading w-full !py-layout'}
+                type={'button'}
+                onClick={() =>
+                  login({
+                    type: 'google',
+                  })
+                }
+                disabled={Boolean(loading && loading !== 'google')}
+              >
+                {loading === 'google' ? (
+                  <Loading />
+                ) : (
+                  <>
+                    <IconBrandGoogleFilled /> Log in With Google
+                  </>
+                )}
               </Button>
               <p>Or</p>
               <Button
                 className={'text-sm'}
                 type={'button'}
-                onClick={() => setCreateAccountMode(true)}
+                onClick={() => setcreateAccountMode(true)}
               >
                 Create New Account
               </Button>
@@ -134,13 +202,13 @@ const LoginPage = () => {
           ) : (
             <>
               <Button className={'heading w-full'} large={true}>
-                {loading ? <Loading/> : 'Register'}
+                {loading ? <Loading /> : 'Register'}
               </Button>
               <p>Or</p>
               <Button
                 className={'text-sm'}
                 type={'button'}
-                onClick={() => setCreateAccountMode(false)}
+                onClick={() => setcreateAccountMode(false)}
               >
                 Return to Login
               </Button>

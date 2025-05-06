@@ -108,6 +108,7 @@ const ImagesSelectCard = ({
               className={
                 'aspect-square h-full w-full rounded-md object-cover transition-opacity group-hover:opacity-50 sm:h-[8rem] sm:w-[8rem]'
               }
+              resolution={640}
             />
           )}
           <div

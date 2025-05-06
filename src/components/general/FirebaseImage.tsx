@@ -22,7 +22,11 @@ const FirebaseImage = ({
   if (_path) {
     if (resolution) {
       const [filePath, ext] = _path.split('.');
-      path = `${filePath}_${resolution}x${resolution}.${ext}`;
+
+      path = `${filePath}_${resolution}x${resolution}`;
+      if (ext) {
+        path += `.${ext}`;
+      }
     } else {
       path = _path;
     }

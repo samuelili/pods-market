@@ -11,6 +11,7 @@ import {
   setDoc,
   where,
 } from 'firebase/firestore';
+import { getPods } from '@/logic/store/pods.ts';
 
 ensureAppInitialized();
 
@@ -78,6 +79,8 @@ export async function removeListing(listingId: string) {
 }
 
 export async function getAllListings(): Promise<Listing[]> {
+  const podIds = (await getPods()).map((pod) => pod.uid);
+
   const q = query(listingsRef);
   const snap = await getDocs(q);
 
@@ -89,7 +92,8 @@ export async function getAllListings(): Promise<Listing[]> {
           uid: doc.id,
           ...doc.data(),
         }) as Listing,
-    );
+    )
+    .filter((listing) => podIds.includes(listing.uid));
 }
 
 export async function getPodListings(podId: string): Promise<Listing[]> {
