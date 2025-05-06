@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 const createListingSchema = z.optional(
   z.object({
-    podId: z.string(),
+    podId: z.optional(z.string()),
   }),
 );
 
