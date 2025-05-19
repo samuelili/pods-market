@@ -10,6 +10,7 @@ import { createListing, NewListing } from '@/logic/store/listings';
 import useCurrentUser from '@/logic/hooks/useCurrentUser';
 import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import { uploadListingImages } from '@/logic/storage';
+import Avatar from '@/components/general/Avatar.tsx';
 
 type Inputs = {
   allPods: boolean;
@@ -127,7 +128,12 @@ const CreateListing = () => {
                     checked={selectedPods.has(pod.uid)}
                     onChange={() => handlePodToggle(pod.uid)}
                   />
-                  <div className={'mr-2 h-8 w-8 rounded-full bg-img'} />
+                  <Avatar
+                    size={8}
+                    name={pod.name}
+                    path={pod.photoUrl}
+                    className={'mr-2 text-sm'}
+                  />
                   {pod.name}
                 </label>
               ))}
@@ -154,8 +160,8 @@ const CreateListing = () => {
           name={'images'}
         />
 
-        <div className={'mt-layout flex gap-layout'}>
-          <label className={'flex-1'}>
+        <div className={'mt-layout flex flex-wrap gap-layout'}>
+          <label className={'flex-auto'}>
             <h3 className={'text-lg'}>
               Listing Title
               <p className={'text-sm text-red-300'}>{errors.title?.message}</p>
@@ -169,7 +175,7 @@ const CreateListing = () => {
             />
           </label>
 
-          <label>
+          <label className={'flex-auto'}>
             <h3 className={'text-lg'}>
               Price
               <p className={'text-sm text-red-300'}>{errors.price?.message}</p>
