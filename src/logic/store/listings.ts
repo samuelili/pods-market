@@ -17,6 +17,7 @@ ensureAppInitialized();
 
 const db = getFirestore();
 
+// const messaging = getMessaging();
 const listingsRef = collection(db, 'listings');
 
 export type Listing = {
@@ -93,7 +94,7 @@ export async function getAllListings(): Promise<Listing[]> {
           ...doc.data(),
         }) as Listing,
     )
-    .filter((listing) => podIds.includes(listing.uid));
+    .filter((listing) => listing.podIds.some(id => podIds.includes(id)));
 }
 
 export async function getPodListings(podId: string): Promise<Listing[]> {

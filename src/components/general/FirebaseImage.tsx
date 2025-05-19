@@ -56,7 +56,21 @@ const FirebaseImage = ({
           })
           .catch((e) => {
             console.error(e);
+            console.error(`couldn't get url for path: ${path}, trying original path`)
             setSrc(undefined);
+            // try just normal path
+
+            // TODO: clean up this chaining
+            getStorageUrl(_path!)
+              .then((url) => {
+                cache.set(path!, url);
+                setSrc(url);
+              })
+              .catch((e) => {
+                console.error(e);
+                setSrc(undefined);
+                // try just normal path
+              });
           });
       } else {
         setSrc(cache.get(path)!);

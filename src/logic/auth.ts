@@ -1,6 +1,7 @@
 import {
   browserLocalPersistence,
   createUserWithEmailAndPassword,
+  FacebookAuthProvider,
   getAuth,
   GoogleAuthProvider,
   setPersistence,
@@ -19,6 +20,7 @@ import { uploadUserAvatarImage } from '@/logic/storage.ts';
 // firebase setup
 const auth = getAuth();
 const googleProvider = new GoogleAuthProvider();
+const facebookProvider = new FacebookAuthProvider();
 const queryClient = getQueryClient();
 
 export let userId = '';
@@ -169,12 +171,14 @@ export async function loginWithEmailAndPassword(
   }
 }
 
-export async function loginWithGoogle() {
+export async function loginWithProvider(
+  provider: GoogleAuthProvider | FacebookAuthProvider,
+) {
   try {
     await setPersistence(auth, browserLocalPersistence);
 
     console.log('Attempting to login with Google...');
-    const userCredential = await signInWithPopup(auth, googleProvider);
+    const userCredential = await signInWithPopup(auth, provider);
     console.log('Logged In with Google...');
 
     const user = await getUser(userCredential.user.uid);
@@ -190,4 +194,12 @@ export async function loginWithGoogle() {
   } catch (error) {
     throwError(error);
   }
+}
+
+export async function loginWithGoogle() {
+  return loginWithProvider(googleProvider);
+}
+
+export async function loginWithFacebook() {
+  return loginWithProvider(facebookProvider);
 }

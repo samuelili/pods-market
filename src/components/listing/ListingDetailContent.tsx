@@ -118,7 +118,7 @@ const ListingDetailContent = ({
 
           <div className={'mt-2 flex items-center gap-2'}>
             <IconMapPin />
-            <p className={'flex-1 leading-tight'}>Davis, CA</p>
+            <p className={'flex-1 leading-tight'}>{listing.location}</p>
           </div>
 
           <div className={'mt-2 flex items-center gap-2'}>

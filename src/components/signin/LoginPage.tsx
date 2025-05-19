@@ -7,11 +7,15 @@ import { useNavigate, useSearch } from '@tanstack/react-router';
 import {
   createUserWithEmailPassword,
   loginWithEmailAndPassword,
+  loginWithFacebook,
   loginWithGoogle,
 } from '@/logic/auth.ts';
 import { addUserToPod } from '@/logic/store/pods.ts';
 import { useQueryClient } from '@tanstack/react-query';
-import { IconBrandGoogleFilled } from '@tabler/icons-react';
+import {
+  IconBrandFacebookFilled,
+  IconBrandGoogleFilled,
+} from '@tabler/icons-react';
 import { User } from '@/types/User.ts';
 
 type Inputs = {
@@ -19,7 +23,7 @@ type Inputs = {
   password: string;
 };
 
-export type LoginTypes = 'email-password' | 'google';
+export type LoginTypes = 'email-password' | 'google' | 'facebook';
 
 const LoginPage = () => {
   const {
@@ -48,6 +52,9 @@ const LoginPage = () => {
           }
         | {
             type: 'google';
+          }
+        | {
+            type: 'facebook';
           },
     ) => {
       setLoading(params.type);
@@ -57,6 +64,8 @@ const LoginPage = () => {
         let user: User | null | undefined;
         if (params.type === 'google') {
           user = await loginWithGoogle();
+        } else if (params.type === 'facebook') {
+          user = await loginWithFacebook();
         } else {
           if (createAccountMode) {
             user = await createUserWithEmailPassword(
@@ -120,8 +129,51 @@ const LoginPage = () => {
       </Card>
       <form className={'contents'} onSubmit={handleSubmit(onSubmit)}>
         <Card className={'mt-layout p-layout'}>
+          <h2 className={'text-center text-2xl'}>Log In With Provider</h2>
+          <div className={'mt-layout flex flex-col gap-2'}>
+            <Button
+              className={'heading w-full !py-layout'}
+              type={'button'}
+              onClick={() =>
+                login({
+                  type: 'google',
+                })
+              }
+              disabled={Boolean(loading && loading !== 'google')}
+            >
+              {loading === 'google' ? (
+                <Loading />
+              ) : (
+                <>
+                  <IconBrandGoogleFilled /> Log in With Google
+                </>
+              )}
+            </Button>
+            <Button
+              className={'heading w-full !py-layout'}
+              type={'button'}
+              onClick={() =>
+                login({
+                  type: 'facebook',
+                })
+              }
+              disabled={Boolean(loading && loading !== 'facebook')}
+            >
+              {loading === 'facebook' ? (
+                <Loading />
+              ) : (
+                <>
+                  <IconBrandFacebookFilled /> Log in With Google
+                </>
+              )}
+            </Button>
+          </div>
+        </Card>
+        <Card className={'mt-layout p-layout'}>
           <h2 className={'text-center text-2xl'}>
-            {!createAccountMode ? 'Log In' : 'Create New Account'}
+            {!createAccountMode
+              ? 'Log In With Email & Password'
+              : 'Create New Account'}
           </h2>
           <label className={'flex-1'}>
             <h3 className={'text-lg'}>
@@ -162,34 +214,16 @@ const LoginPage = () => {
           )}
         </Card>
         <Card className={'mt-layout flex flex-col items-center gap-2'}>
+          <Button
+            className={'heading w-full'}
+            large={true}
+            type={'submit'}
+            disabled={Boolean(loading && loading !== 'email-password')}
+          >
+            {loading === 'email-password' ? <Loading /> : 'Log in'}
+          </Button>
           {!createAccountMode ? (
             <>
-              <Button
-                className={'heading w-full'}
-                large={true}
-                type={'submit'}
-                disabled={Boolean(loading && loading !== 'email-password')}
-              >
-                {loading === 'email-password' ? <Loading /> : 'Log in'}
-              </Button>
-              <Button
-                className={'heading w-full !py-layout'}
-                type={'button'}
-                onClick={() =>
-                  login({
-                    type: 'google',
-                  })
-                }
-                disabled={Boolean(loading && loading !== 'google')}
-              >
-                {loading === 'google' ? (
-                  <Loading />
-                ) : (
-                  <>
-                    <IconBrandGoogleFilled /> Log in With Google
-                  </>
-                )}
-              </Button>
               <p>Or</p>
               <Button
                 className={'text-sm'}
